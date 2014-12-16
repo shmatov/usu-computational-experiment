@@ -38,7 +38,7 @@ def patch_decimal(precision):
         return wrapper
 
     methods = ['__add__', '__sub__', '__mul__', '__floordiv__', '__mod__',
-               '__divmod__', '__pow__']
+               '__divmod__', '__pow__', '__div__']
     for method in methods:
         setattr(Decimal, method, truncate_wrapper(getattr(Decimal, method)))
 
