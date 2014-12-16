@@ -6,6 +6,9 @@ import sys
 import numpy
 
 
+def simple_equation_solver(matrix, vector):
+    pass
+
 def solve():
     pass
 
