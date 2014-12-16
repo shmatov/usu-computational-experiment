@@ -7,7 +7,11 @@ import numpy
 
 
 def simple_equation_solver(matrix, vector):
-    pass
+    new_vector = [None] * 3
+    new_vector[2] = vector[2][0] / matrix[2][2]
+    new_vector[1] = (vector[1][0] - matrix[1][2] * new_vector[2]) / matrix[1][1]
+    new_vector[0] = (vector[0][0] - matrix[0][1] * new_vector[1] - matrix[0][2] * new_vector[2]) / matrix[0][0]
+    return new_vector
 
 def solve():
     pass
