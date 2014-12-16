@@ -12,6 +12,16 @@ def simple_equation_solver(matrix, vector):
     return new_vector
 
 
+def multiply(X, Y):
+    return [
+        [
+            sum(a*b for a, b in zip(X_row, Y_col))
+            for Y_col in zip(*Y)
+        ]
+        for X_row in X
+    ]
+
+
 def decimal_auto_quantize(precision):
     precision = Decimal('.' + '0'*precision)
 
