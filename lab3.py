@@ -154,9 +154,9 @@ def lower_zeros_simple_equation_solver(mx, vec):
 
 def upper_zeros_simple_equation_solver(mx, vec):
     nvec = [None] * 3
-    nvec[0] = vec[0][0] / mx[0][2]
-    nvec[1] = (vec[1][0] - mx[1][2] * nvec[0]) / mx[1][1]
-    nvec[2] = (vec[2][0] - mx[2][1] * nvec[1] - mx[2][2] * nvec[0]) / mx[2][0]
+    nvec[0] = vec[0][0] / mx[0][0]
+    nvec[1] = (vec[1][0] - mx[1][0] * nvec[0]) / mx[1][1]
+    nvec[2] = (vec[2][0] - mx[2][1] * nvec[1] - mx[2][0] * nvec[0]) / mx[2][2]
     return Matrix([[x] for x in nvec])
 
 
