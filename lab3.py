@@ -1,8 +1,11 @@
 #!/usr/bin/env python
+# coding: utf-8
 
 from copy import deepcopy
 from decimal import Decimal, ROUND_DOWN
 import math
+
+from latex import LatexDocument
 
 
 WIDTH = 80
@@ -59,9 +62,6 @@ class Matrix(object):
     def map(self, func):
         return Matrix([[func(x) for x in row] for row in self])
 
-    def adj(self):
-        pass
-
     def lu_decomposition(self):
         n = self.rows
 
@@ -80,6 +80,10 @@ class Matrix(object):
                 l[i][j] = (self[i][j] - s2) / u[j][j]
 
         return l, u
+
+    def to_tex(self):
+        data = r' \\ '.join(' & '.join(map(str, row)) for row in self)
+        return r'\begin{pmatrix}' + data + '\end{pmatrix}'
 
 
 class Num(Decimal):
@@ -200,8 +204,13 @@ def solver_1(mx, vec):
     print 'LU decomposition.'
     l, u = mx.lu_decomposition()
     show('L', l)
+    y = upper_zeros_simple_equation_solver(l, vec)
+    show('y', y)
+
     show('U', u)
-    show('LU', l * u)
+    x = lower_zeros_simple_equation_solver(u, y)
+    show('x', x)
+    # show('LU', l * u)
     print '=' * WIDTH
 
 
@@ -217,7 +226,7 @@ def solver_2(mx, vec):
     show('Vector:', v_gauss)
     print '-' * WIDTH
 
-    calc_ans = simple_equation_solver(m_gauss, v_gauss)
+    calc_ans = lower_zeros_simple_equation_solver(m_gauss, v_gauss)
     print 'Answer after calc:\n'
     print repr(calc_ans)
     print '-' * WIDTH
