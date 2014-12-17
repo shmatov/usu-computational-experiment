@@ -5,7 +5,7 @@ from copy import deepcopy
 from decimal import Decimal, ROUND_DOWN
 import math
 
-from latex import LatexDocument
+from latex import LatexDocument, Math, Section, Text
 
 
 WIDTH = 80
@@ -200,22 +200,34 @@ def solver_1(mx, vec):
     print 'Method 1'.center(WIDTH)
     print ''
     print '-' * WIDTH
-
     print 'LU decomposition.'
     l, u = mx.lu_decomposition()
     show('L', l)
+    show('U', u)
+    show('LU', l * u)
+
     y = upper_zeros_simple_equation_solver(l, vec)
     show('y', y)
 
-    show('U', u)
     x = lower_zeros_simple_equation_solver(u, y)
     show('x', x)
-    # show('LU', l * u)
 
     print 'Diff between real and calculated: {}'.format(
         vector_distance(ans, x.map(float))
     )
     print '=' * WIDTH
+
+    doc = LatexDocument()
+    doc.add(Section('Метод 1'))
+    doc.add(Text('A * x = b'))
+    doc.add(Math('A = ', mx))
+    doc.add(Math('b = ', vec))
+    doc.add(Text('LU разложение. A = L * U'))
+    doc.add(Math('L = ', l))
+    doc.add(Math('U = ', u))
+    doc.add(Text('L * U * x = b'))
+    doc.add(Text('L * y = b'))
+    print doc
 
 
 def solver_2(mx, vec):
