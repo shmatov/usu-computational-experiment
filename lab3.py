@@ -211,6 +211,10 @@ def solver_1(mx, vec):
     x = lower_zeros_simple_equation_solver(u, y)
     show('x', x)
     # show('LU', l * u)
+
+    print 'Diff between real and calculated: {}'.format(
+        vector_distance(ans, x.map(float))
+    )
     print '=' * WIDTH
 
 
