@@ -2,14 +2,13 @@
 # coding: utf-8
 
 from copy import deepcopy
-from decimal import Decimal, ROUND_DOWN
 import math
 import sys
 
 from latex import LatexDocument, Math, Section, Text
+from fixed_precision import Num
 
 
-WIDTH = 80
 doc = LatexDocument()
 
 
@@ -88,43 +87,6 @@ class Matrix(object):
         return r'\begin{pmatrix}' + data + '\end{pmatrix}'
 
 
-class Num(Decimal):
-    precision = 2
-
-    def __new__(cls, value):
-        if isinstance(value, float):
-            value = ('{:.' + str(cls.precision) + 'f}').format(value)
-
-        return super(Num, cls).__new__(cls, value)
-
-    def _quantize(self, value):
-        if isinstance(value, Decimal):
-            decimal_precision = Decimal('.' + '0' * self.precision)
-            return Num(value.quantize(decimal_precision, rounding=ROUND_DOWN))
-        return value
-
-    def __mul__(self, *args, **kwargs):
-        return self._quantize(super(Num, self).__mul__(*args, **kwargs))
-
-    def __add__(self, *args, **kwargs):
-        return self._quantize(super(Num, self).__add__(*args, **kwargs))
-
-    def __sub__(self, *args, **kwargs):
-        return self._quantize(super(Num, self).__sub__(*args, **kwargs))
-
-    def __div__(self, *args, **kwargs):
-        return self._quantize(super(Num, self).__div__(*args, **kwargs))
-
-    def __mod__(self, *args, **kwargs):
-        return self._quantize(super(Num, self).__mod__(*args, **kwargs))
-
-    def __pow__(self, *args, **kwargs):
-        return self._quantize(super(Num, self).__pow__(*args, **kwargs))
-
-    def __repr__(self):
-        return 'Num({})'.format(self)
-
-
 def generate_matrix_and_vector_and_answer(n):
     m = 21 - n
     a = 0.1 * m + 0.01 * n
@@ -192,39 +154,10 @@ def vector_distance(v1, v2):
     return math.sqrt(sum(squares))
 
 
-def show(name, matrix):
-    print ''
-    print name
-    print repr(matrix)
-
-
 def solver_1(mx, vec):
     l, u = mx.lu_decomposition()
     y = upper_zeros_simple_equation_solver(l, vec)
     x = lower_zeros_simple_equation_solver(u, y)
-
-    '''
-    print ''
-    print 'Method 1'.center(WIDTH)
-    print ''
-    print '-' * WIDTH
-    print 'LU decomposition.'
-
-    show('L', l)
-    show('U', u)
-    show('LU', l * u)
-
-
-    show('y', y)
-
-
-    show('x', x)
-
-    print 'Diff between real and calculated: {}'.format(
-        vector_distance(ans, x.map(float))
-    )
-    print '=' * WIDTH
-    '''
 
     doc.add(Text('Ax = b'))
     doc.add(Text('Выполним LU-разложение для матрицы A. A = LU'))
@@ -241,29 +174,6 @@ def solver_2(mx, vec):
     m_gauss, v_gauss = gauss_transformation(mx, vec)
     x = lower_zeros_simple_equation_solver(m_gauss, v_gauss)
 
-    '''
-    print ''
-    print 'Method 2'.center(WIDTH)
-    print ''
-    print '-' * WIDTH
-
-
-    print 'After gauss transformation.'
-    show('Matrix:', m_gauss)
-    show('Vector:', v_gauss)
-    print '-' * WIDTH
-
-
-    print 'Answer after calc:\n'
-    print repr(calc_ans)
-    print '-' * WIDTH
-
-    print 'Diff between real and calculated: {}'.format(
-        vector_distance(ans, calc_ans.map(float))
-    )
-    print '=' * WIDTH
-    '''
-
     doc.add(Text('После приведения к нижнетреугольной матрице:'))
     doc.add(Math(r'\acute{A} = ', m_gauss))
     doc.add(Math(r'\acute{b} = ', v_gauss))
@@ -272,13 +182,8 @@ def solver_2(mx, vec):
 
 if __name__ == '__main__':
     n = int(sys.argv[1])
-    # n = int(raw_input('Solve task for N = '))
     mx, vec, ans = generate_matrix_and_vector_and_answer(n)
 
-    # show('Matrix:', mx)
-    # show('Vector:', vec)
-    # show('Answer:', ans)
-    # print '=' * WIDTH
 
     doc.add(Section('Решение Ax = b  различными методами для N={}(вариант)'.format(n)))
     doc.add(Math('A = ', mx))
