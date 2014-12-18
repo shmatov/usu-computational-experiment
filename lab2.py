@@ -4,6 +4,7 @@ import math
 
 eps = 0.5 * 10**-5
 interval = (0, 2)
+func_plots = []
 
 
 def sign(x):
@@ -62,10 +63,26 @@ def moving_hords():
     i = []
     while True:
         x_next = x_curr - (f(x_curr)*(x_curr - x_prev)) / (f(x_curr) - f(x_prev))
-        i.append(f(x_next))
+        i.append(x_next)
         if abs(x_curr - x_next) < eps:
             return x_next, i
         x_prev, x_curr = x_curr, x_next
+
+def muller():
+	_, i = dichotomy()
+	i = i[:3]
+	while abs(i[-1] - i[-2]) > eps:
+		x1, x2, x3 = i[-3:] #Xk-2, Xk-1, Xk 
+		q = (x3 - x2) / (x2 - x1)
+		A = q * f(x3) - q * (1 + q) * f(x2) + q * q * f(x1)
+		B = (2 * q + 1) * f(x3) - (1 + q) * (1 + q) * f(x2) + q * q * f(x1)
+		C = (1 + q) * f(x3)
+		expr1 = B + math.sqrt(B * B - 4 * A * C)
+		expr2 = B - math.sqrt(B * B - 4 * A * C)
+		expr = expr1 if (abs(expr1) > abs(expr2)) else expr2
+		x_next = x3 - (x3 - x2) * 2 * C / expr
+		i.append(x_next)
+	return i[-1], i
 
 
 if __name__ == '__main__':
@@ -75,8 +92,10 @@ if __name__ == '__main__':
     def compute(method):
         result, iterations = method()
         iterations = zip(iterations, map(f, iterations))
+        func_plots.append((method.func_name, iterations))
         # iterations == [(x0, f(x0), .., (xn, f(xn))]
         return method.func_name, result, len(iterations)
+
 
     print f.func_doc
     print df.func_doc
@@ -90,4 +109,9 @@ if __name__ == '__main__':
     print fmt(*compute(static_hords))
     print fmt(*compute(moving_hords))
     print fmt(*compute(newton))
+    print fmt(*compute(muller))
     print '-'*64
+
+    for func in func_plots:
+    	print func[0]
+    	print 'plot{' + ', '.join(map(lambda (_, y): "{}".format(abs(y)), func[1])) + '}'
