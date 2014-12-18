@@ -21,6 +21,16 @@ def df(x):
     return -2 * math.sin(x) - math.e ** x
 
 
+def f2(x):
+    """1 + sin(x) - 1.2*e^-x"""
+    return 1 + math.sin(x) - 1.2 / math.e ** x
+
+
+def df2(x):
+    """cos(x) + 1.2*e^-x"""
+    return math.cos(x) + 1.2 / math.e ** x
+
+
 def dichotomy():
     a, b = interval
     x = a
