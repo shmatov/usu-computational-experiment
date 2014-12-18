@@ -106,7 +106,7 @@ def generate_matrix_and_vector_and_answer(n):
         [2],
         [0.1 * m + 0.01 * n]
     ])
-    return matrix.map(Num), vector.map(Num), answer
+    return matrix, vector, answer
 
 
 def lower_zeros_simple_equation_solver(mx, vec):
@@ -182,18 +182,20 @@ def solver_2(mx, vec):
 
 if __name__ == '__main__':
     n = int(sys.argv[1])
-    mx, vec, ans = generate_matrix_and_vector_and_answer(n)
+    original_mx, original_vec, ans = generate_matrix_and_vector_and_answer(n)
 
 
     doc.add(Section('Решение Ax = b  различными методами для N={}(вариант)'.format(n)))
-    doc.add(Math('A = ', mx))
-    doc.add(Math('b = ', vec))
+    doc.add(Math('A = ', original_mx.map('{:.8g}'.format)))
+    doc.add(Math('b = ', original_vec.map('{:.8g}'.format)))
     doc.add(Text('Точный ответ:'))
     doc.add(Math(r'\bar{x} = ', ans))
 
     for method in [1, 2]:
         for k in [2, 4, 6]:
             Num.precision = k
+            mx = original_mx.map(Num)
+            vec = original_vec.map(Num)
             slv_name = 'компактной схемы Гаусса(LU-разложение)' if method == 1 else 'Гаусса с выбором главного элемента'
             doc.add(Text(''))
             doc.add(Text(''))

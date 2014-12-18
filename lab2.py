@@ -3,7 +3,7 @@ import math
 
 
 eps = 0.5 * 10**-5
-interval = (0, 1)
+interval = (0, 2)
 
 
 def sign(x):
@@ -36,7 +36,7 @@ def dichotomy():
 
 
 def newton():
-    x0 = (interval[0]+interval[-1])/2.
+    x0, _ = interval
     i = 0
     while True:
         i += 1
