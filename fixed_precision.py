@@ -6,10 +6,11 @@ class Num(Decimal):
 
     def __new__(cls, value):
         if isinstance(value, float):
-            value = ('{:.' + str(cls.precision) + 'f}').format(value)
+            value = cls._quantize(Decimal(value))
 
         return super(Num, cls).__new__(cls, value)
 
+    @classmethod
     def _quantize(self, value):
         if isinstance(value, Decimal):
             decimal_precision = Decimal('.' + '0' * self.precision)
