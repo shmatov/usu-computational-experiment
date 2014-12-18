@@ -124,4 +124,4 @@ if __name__ == '__main__':
 
     for func in func_plots:
     	print func[0]
-    	print 'plot{' + ', '.join(map(lambda (_, y): "{}".format(abs(y)), func[1])) + '}'
+    	print 'plot{' + ', '.join(map(lambda (_, y): "{:.4f}".format(abs(y)), func[1])) + '}'
