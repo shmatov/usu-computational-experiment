@@ -280,10 +280,11 @@ if __name__ == '__main__':
     # show('Answer:', ans)
     # print '=' * WIDTH
 
-    doc.add(Section('Решение Ax = b для N={}'.format(n)))
+    doc.add(Section('Решение Ax = b  различными методами для N={}(вариант)'.format(n)))
     doc.add(Math('A = ', mx))
     doc.add(Math('b = ', vec))
-    doc.add(Math(r'Точный ответ \bar{x} = ', ans))
+    doc.add(Text('Точный ответ:'))
+    doc.add(Math(r'\bar{x} = ', ans))
 
     for method in [1, 2]:
         for k in [2, 4, 6]:
@@ -291,7 +292,7 @@ if __name__ == '__main__':
             slv_name = 'компактной схемы Гаусса(LU-разложение)' if method == 1 else 'Гаусса с выбором главного элемента'
             doc.add(Text(''))
             doc.add(Text(''))
-            doc.add(Section('Решение системы методом {} при k={}'.format(slv_name, k)))
+            doc.add(Section('Решение системы методом {} при k={}(точность)'.format(slv_name, k)))
             calc_ans = solver_1(mx, vec) if method == 1 else solver_2(mx, vec)
             doc.add(Text('Вычисленное значение:'))
             doc.add(Math(r'\tilde{x} = ', calc_ans))
