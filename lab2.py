@@ -62,7 +62,7 @@ def moving_hords():
     i = []
     while True:
         x_next = x_curr - (f(x_curr)*(x_curr - x_prev)) / (f(x_curr) - f(x_prev))
-        i.append(x_next)
+        i.append(f(x_next))
         if abs(x_curr - x_next) < eps:
             return x_next, i
         x_prev, x_curr = x_curr, x_next
@@ -74,6 +74,8 @@ if __name__ == '__main__':
 
     def compute(method):
         result, iterations = method()
+        iterations = zip(iteratins, map(f, iterations))
+        # iterations == [(x0, f(x0), .., (xn, f(xn))]
         return method.func_name, result, len(iterations)
 
     print f.func_doc
