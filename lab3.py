@@ -4,12 +4,13 @@
 from copy import deepcopy
 from decimal import Decimal, ROUND_DOWN
 import math
+import sys
 
 from latex import LatexDocument, Math, Section, Text
 
 
 WIDTH = 80
-DOC = LatexDocument()
+doc = LatexDocument()
 
 
 class Matrix(object):
@@ -225,14 +226,14 @@ def solver_1(mx, vec):
     print '=' * WIDTH
     '''
 
-    DOC.add(Text('Ax = b'))
-    DOC.add(Text('Выполним LU-разложение для матрицы A. A = LU'))
-    DOC.add(Math('L = ', l))
-    DOC.add(Math('U = ', u))
-    DOC.add(Text('Получаем LUx = b'))
-    DOC.add(Text('Считая, что Ux = y, решим систему Ly = b подстановкой:'))
-    DOC.add(Math('y = ', y))
-    DOC.add(Text('Теперь решим систему Ux = y.'))
+    doc.add(Text('Ax = b'))
+    doc.add(Text('Выполним LU-разложение для матрицы A. A = LU'))
+    doc.add(Math('L = ', l))
+    doc.add(Math('U = ', u))
+    doc.add(Text('Получаем LUx = b'))
+    doc.add(Text('Считая, что Ux = y, решим систему Ly = b подстановкой:'))
+    doc.add(Math('y = ', y))
+    doc.add(Text('Теперь решим систему Ux = y.'))
     return x
 
 
@@ -263,35 +264,36 @@ def solver_2(mx, vec):
     print '=' * WIDTH
     '''
 
-    DOC.add(Text('После приведения к нижнетреугольной матрице:'))
-    DOC.add(Math('\acute{A} = ', m_gauss))
-    DOC.add(Math('\acute{b} = ', v_gauss))
+    doc.add(Text('После приведения к нижнетреугольной матрице:'))
+    doc.add(Math(r'\acute{A} = ', m_gauss))
+    doc.add(Math(r'\acute{b} = ', v_gauss))
     return x
 
 
 if __name__ == '__main__':
-    n = int(raw_input('Solve task for N = '))
+    n = int(sys.argv[1])
+    # n = int(raw_input('Solve task for N = '))
     mx, vec, ans = generate_matrix_and_vector_and_answer(n)
 
-    show('Matrix:', mx)
-    show('Vector:', vec)
-    show('Answer:', ans)
-    print '=' * WIDTH
+    # show('Matrix:', mx)
+    # show('Vector:', vec)
+    # show('Answer:', ans)
+    # print '=' * WIDTH
 
-    DOC.add(Section('Решение Ax = b для N={}'.format(n)))
-    DOC.add(Math('A = ', mx))
-    DOC.add(Math('b = ', vec))
-    DOC.add(Math('Точный ответ \bar{x} = ', ans))
+    doc.add(Section('Решение Ax = b для N={}'.format(n)))
+    doc.add(Math('A = ', mx))
+    doc.add(Math('b = ', vec))
+    doc.add(Math(r'Точный ответ \bar{x} = ', ans))
 
     for method in [1, 2]:
         for k in [2, 4, 6]:
             Num.precision = k
             slv_name = 'компактной схемы Гаусса(LU-разложение)' if method == 1 else 'Гаусса с выбором главного элемента'
-            DOC.add(Text(''))
-            DOC.add(Text(''))
-            DOC.add(Section('Решение системы методом {} при k={}'.format(slv_name, k)))
+            doc.add(Text(''))
+            doc.add(Text(''))
+            doc.add(Section('Решение системы методом {} при k={}'.format(slv_name, k)))
             calc_ans = solver_1(mx, vec) if method == 1 else solver_2(mx, vec)
-            DOC.add(Text('Вычисленное значение:'))
-            DOC.add(Math('\tilde{x} = ', calc_ans))
-            DOC.add(Math('||\bar{x} - \tilde{x}|| = ', vector_distance(ans, calc_ans.map(float))))
-    print DOC
+            doc.add(Text('Вычисленное значение:'))
+            doc.add(Math(r'\tilde{x} = ', calc_ans))
+            doc.add(Math(r'||\bar{x} - \tilde{x}|| = ', vector_distance(ans, calc_ans.map(float))))
+    print doc
