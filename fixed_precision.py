@@ -6,7 +6,7 @@ class Num(Decimal):
 
     def __new__(cls, value):
         if isinstance(value, float):
-            value = cls._quantize(Decimal(value))
+            value = ('{:.' + str(cls.precision) + 'f}').format(value)
 
         return super(Num, cls).__new__(cls, value)
 
