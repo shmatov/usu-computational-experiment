@@ -9,6 +9,7 @@ from latex import LatexDocument, Math, Section, Text
 
 
 WIDTH = 80
+DOC = LatexDocument()
 
 
 class Matrix(object):
@@ -71,7 +72,7 @@ class Matrix(object):
         for j in xrange(n):
             l[j][j] = abs(self[j][j] / self[j][j])
 
-            for i in xrange(j+1):
+            for i in xrange(j + 1):
                 s1 = sum(u[k][j] * l[i][k] for k in xrange(i))
                 u[i][j] = self[i][j] - s1
 
@@ -152,6 +153,7 @@ def lower_zeros_simple_equation_solver(mx, vec):
     nvec[0] = (vec[0][0] - mx[0][1] * nvec[1] - mx[0][2] * nvec[2]) / mx[0][0]
     return Matrix([[x] for x in nvec])
 
+
 def upper_zeros_simple_equation_solver(mx, vec):
     nvec = [None] * 3
     nvec[0] = vec[0][0] / mx[0][0]
@@ -196,53 +198,61 @@ def show(name, matrix):
 
 
 def solver_1(mx, vec):
+    l, u = mx.lu_decomposition()
+    y = upper_zeros_simple_equation_solver(l, vec)
+    x = lower_zeros_simple_equation_solver(u, y)
+
+    '''
     print ''
     print 'Method 1'.center(WIDTH)
     print ''
     print '-' * WIDTH
     print 'LU decomposition.'
-    l, u = mx.lu_decomposition()
+
     show('L', l)
     show('U', u)
     show('LU', l * u)
 
-    y = upper_zeros_simple_equation_solver(l, vec)
+
     show('y', y)
 
-    x = lower_zeros_simple_equation_solver(u, y)
+
     show('x', x)
 
     print 'Diff between real and calculated: {}'.format(
         vector_distance(ans, x.map(float))
     )
     print '=' * WIDTH
+    '''
 
-    doc = LatexDocument()
-    doc.add(Section('Метод 1'))
-    doc.add(Text('A * x = b'))
-    doc.add(Math('A = ', mx))
-    doc.add(Math('b = ', vec))
-    doc.add(Text('LU разложение. A = L * U'))
-    doc.add(Math('L = ', l))
-    doc.add(Math('U = ', u))
-    doc.add(Text('L * U * x = b'))
-    doc.add(Text('L * y = b'))
-    print doc
+    DOC.add(Text('Ax = b'))
+    DOC.add(Text('Выполним LU-разложение для матрицы A. A = LU'))
+    DOC.add(Math('L = ', l))
+    DOC.add(Math('U = ', u))
+    DOC.add(Text('Получаем LUx = b'))
+    DOC.add(Text('Считая, что Ux = y, решим систему Ly = b подстановкой:'))
+    DOC.add(Math('y = ', y))
+    DOC.add(Text('Теперь решим систему Ux = y.'))
+    return x
 
 
 def solver_2(mx, vec):
+    m_gauss, v_gauss = gauss_transformation(mx, vec)
+    x = lower_zeros_simple_equation_solver(m_gauss, v_gauss)
+
+    '''
     print ''
     print 'Method 2'.center(WIDTH)
     print ''
     print '-' * WIDTH
 
-    m_gauss, v_gauss = gauss_transformation(mx, vec)
+
     print 'After gauss transformation.'
     show('Matrix:', m_gauss)
     show('Vector:', v_gauss)
     print '-' * WIDTH
 
-    calc_ans = lower_zeros_simple_equation_solver(m_gauss, v_gauss)
+
     print 'Answer after calc:\n'
     print repr(calc_ans)
     print '-' * WIDTH
@@ -251,6 +261,12 @@ def solver_2(mx, vec):
         vector_distance(ans, calc_ans.map(float))
     )
     print '=' * WIDTH
+    '''
+
+    DOC.add(Text('После приведения к нижнетреугольной матрице:'))
+    DOC.add(Math('\acute{A} = ', m_gauss))
+    DOC.add(Math('\acute{b} = ', v_gauss))
+    return x
 
 
 if __name__ == '__main__':
@@ -262,5 +278,20 @@ if __name__ == '__main__':
     show('Answer:', ans)
     print '=' * WIDTH
 
-    solver_1(mx, vec)
-    solver_2(mx, vec)
+    DOC.add(Section('Решение Ax = b для N={}'.format(n)))
+    DOC.add(Math('A = ', mx))
+    DOC.add(Math('b = ', vec))
+    DOC.add(Math('Точный ответ \bar{x} = ', ans))
+
+    for method in [1, 2]:
+        for k in [2, 4, 6]:
+            Num.precision = k
+            slv_name = 'компактной схемы Гаусса(LU-разложение)' if method == 1 else 'Гаусса с выбором главного элемента'
+            DOC.add(Text(''))
+            DOC.add(Text(''))
+            DOC.add(Section('Решение системы методом {} при k={}'.format(slv_name, k)))
+            calc_ans = solver_1(mx, vec) if method == 1 else solver_2(mx, vec)
+            DOC.add(Text('Вычисленное значение:'))
+            DOC.add(Math('\tilde{x} = ', calc_ans))
+            DOC.add(Math('||\bar{x} - \tilde{x}|| = ', vector_distance(ans, calc_ans.map(float))))
+    print DOC
