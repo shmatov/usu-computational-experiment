@@ -70,19 +70,22 @@ def moving_hords():
 
 if __name__ == '__main__':
     def fmt(*cells):
-        return '\n'.join(map(str, cells)) + '\n' + '-' * 80
+        return '|' + '|'.join(map("{:^20}".format, cells)) + '|'
 
     def compute(method):
         result, iterations = method()
-        return method.func_name, result, iterations
+        return method.func_name, result, len(iterations)
 
     print f.func_doc
     print df.func_doc
     print 'interval:', list(interval)
     print 'eps:', eps
-    print '-'*80
 
+    print '-'*64
+    print fmt('method', 'result', 'iterations')
+    print '-'*64
     print fmt(*compute(dichotomy))
     print fmt(*compute(static_hords))
     print fmt(*compute(moving_hords))
     print fmt(*compute(newton))
+    print '-'*64
