@@ -74,7 +74,7 @@ if __name__ == '__main__':
 
     def compute(method):
         result, iterations = method()
-        iterations = zip(iteratins, map(f, iterations))
+        iterations = zip(iterations, map(f, iterations))
         # iterations == [(x0, f(x0), .., (xn, f(xn))]
         return method.func_name, result, len(iterations)
 
