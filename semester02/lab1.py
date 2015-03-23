@@ -68,7 +68,7 @@ def solve_task01():
     left = 0
     right = 1
     step = 0.1
-    table = ASCIITable(['method/computation', 'Sn[f]', 'S2n[f]', 'Runge'])
+    table = ASCIITable(['method\computation', 'Sn[f]', 'S2n[f]', 'Runge'])
     for integral_method in [(rectangle_method, 2), (trapezoidal_rule, 2), (simpson, 4)]:
         integral, algebraic_accuracy = integral_method
         sn = integral(f1, left, right, step)
