@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import math
+from table import ASCIITable
 
 """
 
@@ -99,16 +100,19 @@ def compute_intergral_with_eps(method, function, left, right, eps):
 def solve_task01():
     left = 0
     right = 1
+    table = ASCIITable(['Method', 'Step', 'Result'])
     method_and_step = [
-        (rectangle_method, 0.1),
-        (rectangle_method, 0.05),
-        (trapezoidal_rule, 0.1),
-        (trapezoidal_rule, 0.05),
-        (simpson, 0.1),
-        (simpson, 0.05),
+        ('Rectangle method', rectangle_method, 0.1),
+        ('Rectangle method', rectangle_method, 0.05),
+        ('Trapezoidal rule', trapezoidal_rule, 0.1),
+        ('Trapezoidal rule', trapezoidal_rule, 0.05),
+        ('Simpson', simpson, 0.1),
+        ('Simpson', simpson, 0.05),
     ]
-    for (method, step) in method_and_step:
-        print method(f1, left, right, step)
+    for (name, method, step) in method_and_step:
+        result = method(f1, left, right, step)
+        table.add_row([name, step, result])
+    print table
     # Rn - ?
     # LATEX TABLES
 
