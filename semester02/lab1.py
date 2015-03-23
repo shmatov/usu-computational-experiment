@@ -3,10 +3,14 @@ import math
 from table import ASCIITable
 
 
+def sign(num):
+    return math.copysign(1, num)
+
 
 def f1(x):
     B = 1  # random const from my head
     return math.sqrt(1 + x + x*x + B)
+
 
 def f2(x):
     return 1/(1 + x*x)
@@ -14,7 +18,6 @@ def f2(x):
 
 def f3(x):
     return math.atan(x) / (1 + x*x*x)
-
 
 
 def integral_core(function, accumulate, left, right, step):
@@ -25,6 +28,7 @@ def integral_core(function, accumulate, left, right, step):
         integral_acc += accumulate(left, left_actual)
         left = left_actual
     return integral_acc
+
 
 def rectangle_method(function, left, right, step):
     def accumulator(a, b):
@@ -47,6 +51,7 @@ def simpson(function, left, right, step):
 def compute_intergral_with_eps(function, function_c2, left, right, eps):
     pass
 
+
 def dichotomy(f, a, b, eps):
     x = None
     assert(sign(f(a)) != sign(f(b)))
@@ -63,13 +68,15 @@ def solve_task01():
     left = 0
     right = 1
     eps = 0.1
-    table = ASCIITable(['TASK01: method\computation', 'Sn[f]', 'S2n[f]', 'Runge'])
+    table = ASCIITable(['method', 'Sn[f]', 'S2n[f]', 'Runge'])
     for integral_method in [(rectangle_method, 2), (trapezoidal_rule, 2), (simpson, 4)]:
         integral, algebraic_accuracy = integral_method
         sn = integral(f1, left, right, eps)
         s2n = integral(f1, left, right, eps / 2)
-        table.add_row([integral.func_name, sn, s2n, abs(sn - s2n) / (pow(2, algebraic_accuracy) - 1)])
-    print table;
+        runge = abs(sn - s2n) / (pow(2, algebraic_accuracy) - 1)
+        table.add_row([integral.func_name, sn, s2n, runge])
+    print 'TASK01'
+    print table
 
 
 def solve_task02():
@@ -87,9 +94,6 @@ def solve_task03():
 
 # document = LaTeX() uncomment at global instance
 if __name__ == '__main__':
-    #print '-'*20 + 'Task 1'
     solve_task01()
-    #print '-'*20 + 'Task 2'
     solve_task02()
-    #print '-'*20 + 'Task 3'
     solve_task03()
