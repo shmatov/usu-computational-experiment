@@ -7,7 +7,11 @@ class ASCIITable(object):
 
     def add_row(self, row):
         assert len(row) == len(self.headers)
-        self.rows.append(map(str, row))
+        def to_str(x):
+            if isinstance(x, float):
+                return '%.6f' % x
+            return str(x)
+        self.rows.append(map(to_str, row))
 
     def _horizontal_split(self, width, sym):
         return sym * width + '\n'

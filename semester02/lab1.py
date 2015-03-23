@@ -71,14 +71,13 @@ def solve_task02():
     n = 30
     methods = [rectangle_method, trapezoidal_rule, simpson]
     table = ASCIITable(['n'] + [y for x in methods for y in (x.func_name, 'error')])
-    for i in xrange(n):
-        step = (right - left) / float(n + 1)
-        table_row = [i + 1]
+    for i in range(1, n + 1):
+        step = (right - left) / float(i)
+        table_row = [i]
         for method in methods:
             integral = method(f2, left, right, step)
             error = math.pi / 4 - integral
-            table_row.append(integral)
-            table_row.append(error)
+            table_row.extend([integral, error])
         table.add_row(table_row)
     print 'TASK02'
     print table
