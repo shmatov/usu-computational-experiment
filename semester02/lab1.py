@@ -68,7 +68,7 @@ def solve_task01():
         integral, algebraic_accuracy = integral_method
         sn = integral(f1, left, right, eps)
         s2n = integral(f1, left, right, eps / 2)
-        table.add_row([integral.func_name, sn, s2n, abs(sn - s2n) / (pow(2, algebraic_accuracy) - 1)])
+        table.add_row([integral.func_name, sn, s2n, abs(sn - s2n) / (2**algebraic_accuracy - 1)])
     print table;
 
 
