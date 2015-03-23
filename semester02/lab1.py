@@ -2,47 +2,11 @@
 import math
 from table import ASCIITable
 
-"""
-
-decomposition:
-for lab 1.1:
-1)Interface: method(Function function, double from, double to, double step) -> double
-Srednie_pryamougolniki
-Trapecii
-Simpson
-
-2)Rn[f] - ? I forgot how to count that
-Rerror(Function function, double step) -> double
-
-3)LaTeX: tags for tables
-
-
-for lab 1.2:
-<pick some N from imagination> [I recommend 15]
-from i = 1 to N
-    step = 1/i
-    using 1) from 1.1 use method(func, step)
-using 3) from 1.1 make table
-4)Make N decart graphs with point to point lines, where point is (x, f(x)), x from each step
-
-
-for lab 1.3:
-use analytics to spent error and make integral a finite one.
-N = 2
-while(abs(prev_integral - act_intergral) < epsilon)
-    N = N * 2
-    prev_integral = act_intergral
-    act_intergral = using any method 1) from 1.1 with step 1/N
-print act_intergral
-
-
-"""
 
 
 def f1(x):
     B = 1  # random const from my head
     return math.sqrt(1 + x + x*x + B)
-
 
 def f2(x):
     return 1/(1 + x*x)
@@ -50,6 +14,7 @@ def f2(x):
 
 def f3(x):
     return math.atan(x) / (1 + x*x*x)
+
 
 
 def integral_core(function, accumulate, left, right, step):
@@ -60,7 +25,6 @@ def integral_core(function, accumulate, left, right, step):
         integral_acc += accumulate(left, left_actual)
         left = left_actual
     return integral_acc
-
 
 def rectangle_method(function, left, right, step):
     def accumulator(a, b):
@@ -80,41 +44,32 @@ def simpson(function, left, right, step):
     return integral_core(function, accumulator, left, right, step)
 
 
-def step_for_interval(left, right, n):
-    return (right - left) / n
+def compute_intergral_with_eps(function, function_c2, left, right, eps):
+    pass
 
-
-def compute_intergral_with_eps(method, function, left, right, eps):
-    def compute_integral(n):
-        return method(function, left, right, step_for_interval(left, right, n))
-
-    N = 3  # bullshit
-    prev_integral = compute_integral(N - 1)
-    current_integral = compute_integral(N)
-    while abs(prev_integral - current_integral) < eps:
-        N += 1  # bullshit
-        prev_integral, current_integral = current_integral, compute_integral(N)
-    return current_integral
+def dichotomy(f, a, b, eps):
+    x = None
+    assert(sign(f(a)) != sign(f(b)))
+    while abs(b - a) > eps:
+        x = (a + b) / 2.
+        if sign(f(x)) == sign(f(a)):
+            a = x
+        if sign(f(x)) == sign(f(b)):
+            b = x
+    return x
 
 
 def solve_task01():
     left = 0
     right = 1
-    table = ASCIITable(['Method', 'Step', 'Result'])
-    method_and_step = [
-        ('Rectangle method', rectangle_method, 0.1),
-        ('Rectangle method', rectangle_method, 0.05),
-        ('Trapezoidal rule', trapezoidal_rule, 0.1),
-        ('Trapezoidal rule', trapezoidal_rule, 0.05),
-        ('Simpson', simpson, 0.1),
-        ('Simpson', simpson, 0.05),
-    ]
-    for (name, method, step) in method_and_step:
-        result = method(f1, left, right, step)
-        table.add_row([name, step, result])
-    print table
-    # Rn - ?
-    # LATEX TABLES
+    eps = 0.1
+    table = ASCIITable(['TASK01: method\computation', 'Sn[f]', 'S2n[f]', 'Runge'])
+    for integral_method in [(rectangle_method, 2), (trapezoidal_rule, 2), (simpson, 4)]:
+        integral, algebraic_accuracy = integral_method
+        sn = integral(f1, left, right, eps)
+        s2n = integral(f1, left, right, eps / 2)
+        table.add_row([integral.func_name, sn, s2n, abs(sn - s2n) / (pow(2, algebraic_accuracy) - 1)])
+    print table;
 
 
 def solve_task02():
@@ -124,15 +79,17 @@ def solve_task02():
 def solve_task03():
     eps = 0.005
     left = 0
-    right = 13  # roundup(sqrt(pi / (4 * eps)))
-    print compute_intergral_with_eps(trapezoidal_rule, f3, left, right, eps)
+    right = round(1 + math.sqrt(math.pi / (4 * eps)))
+    table = ASCIITable(['TASK03: compute integral with epsilon'])
+    table.add_row([compute_intergral_with_eps(trapezoidal_rule, f3, left, right, eps)])
+    print table
 
 
 # document = LaTeX() uncomment at global instance
 if __name__ == '__main__':
-    print '-'*20 + 'Task 1'
+    #print '-'*20 + 'Task 1'
     solve_task01()
-    print '-'*20 + 'Task 2'
+    #print '-'*20 + 'Task 2'
     solve_task02()
-    print '-'*20 + 'Task 3'
+    #print '-'*20 + 'Task 3'
     solve_task03()
