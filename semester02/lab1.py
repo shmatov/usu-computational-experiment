@@ -79,7 +79,7 @@ def solve_task02():
         table_row = [i]
         for method in methods:
             integral = method(f2, left, right, step)
-            error = math.pi / 4 - integral
+            error = abs(math.pi / 4 - integral)
             table_row.extend([integral, error])
         table.add_row(table_row)
     print 'TASK02'
