@@ -49,7 +49,7 @@ def f2(x):
 
 
 def f3(x):
-    return math.arctg(x) / (1 + x*x*x)
+    return math.atan(x) / (1 + x*x*x)
 
 
 def integral_core(function, accumulate, left, right, step):
