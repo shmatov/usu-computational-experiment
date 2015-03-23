@@ -50,28 +50,28 @@ def f3(x):
 
 
 def integral_core(function, accumulate, left, right, step):
-	assert(left < right and step > 0)
-	integral_acc = 0
-	while left < right:
-		step_actual = min(left + step, right) - left
-		integral_acc = integral_acc + accumulate(left, left + step_actual)
-		left = left + step
-	return integral_acc
+    assert(left < right and step > 0)
+    integral_acc = 0
+    while left < right:
+        step_actual = min(left + step, right) - left
+        integral_acc = integral_acc + accumulate(left, left + step_actual)
+        left = left + step
+    return integral_acc
 
 def rectangle_method(function, left, right, step):
-	def accumulator(a, b):
-		return (b - a) * function((a + b) / 2)
-	return integral_core(function, *accumulator, left, right, step)
+    def accumulator(a, b):
+        return (b - a) * function((a + b) / 2)
+    return integral_core(function, *accumulator, left, right, step)
 
 def trapezoidal_rule(function, left, right, step):
-	def accumulator(a, b):
-		return (b - a) * (function(a) + function(b)) / 2
-	return integral_core(function, *accumulator, left, right, step)
+    def accumulator(a, b):
+        return (b - a) * (function(a) + function(b)) / 2
+    return integral_core(function, *accumulator, left, right, step)
 
 def simpson(function, left, right, step):
-	def accumulator(a, b):
-		return (b - a) / 6 * (function(a) + function(b) + 4 * function((a + b) / 2))
-	return integral_core(function, *accumulator, left, right, step)
+    def accumulator(a, b):
+        return (b - a) / 6 * (function(a) + function(b) + 4 * function((a + b) / 2))
+    return integral_core(function, *accumulator, left, right, step)
 
 
 
@@ -109,7 +109,7 @@ def solve_task02():
 
 
 def solve_task03():
-	eps = 0.005
+    eps = 0.005
     left = 0
     right = 13 # roundup(sqrt(pi / (4 * eps)))
     print compute_intergral_with_eps(*trapezoidal_rule, *f3, left, right, eps)
