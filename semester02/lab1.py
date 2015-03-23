@@ -64,8 +64,24 @@ def solve_task01():
     print table
 
 
+
 def solve_task02():
-    pass
+    left = 0;
+    right = 1;
+    n = 30
+    methods = [rectangle_method, trapezoidal_rule, simpson]
+    table = ASCIITable(['n'] + [y for x in methods for y in (x.func_name, 'error')])
+    for i in xrange(n):
+        step = (right - left) / float(n)
+        table_row = [i]
+        for method in methods:
+            integral = method(f2, left, right, step)
+            error = math.pi / 4 - integral
+            table_row.append(integral, error)
+        table.add_row(table_row)
+    print 'TASK02'
+    print table
+
 
 
 def solve_task03():
@@ -74,7 +90,7 @@ def solve_task03():
     right = round(1 + math.sqrt(math.pi / (4 * eps))) # A(eps)
     max_f2c = 0.3256314123833 # M2, we know this a hard way ;[
     # maximize ((18 x^4)/(x^3+1)^3-(6 x)/(x^3+1)^2) tan^(-1)(x)-(6 x^2)/((x^2+1) (x^3+1)^2)-(2 x)/((x^2+1)^2 (x^3+1)) over [0, 14]
-    step = round(1 + math.pow(12 * eps / max_f2c, 1/3))
+    step = math.pow(12 * eps / max_f2c, 1/3)
 
     table = ASCIITable(['compute integral with epsilon'])
     table.add_row([trapezoidal_rule(f3, left, right, step)])
