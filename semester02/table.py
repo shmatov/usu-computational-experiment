@@ -1,6 +1,3 @@
-from pprint import pprint
-
-
 class ASCIITable(object):
     def __init__(self, headers, rows=None):
         self.headers = headers
