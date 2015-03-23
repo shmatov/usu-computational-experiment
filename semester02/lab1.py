@@ -65,19 +65,19 @@ def integral_core(function, accumulate, left, right, step):
 def rectangle_method(function, left, right, step):
     def accumulator(a, b):
         return (b - a) * function((a + b) / 2)
-    return integral_core(function, *accumulator, left, right, step)
+    return integral_core(function, accumulator, left, right, step)
 
 
 def trapezoidal_rule(function, left, right, step):
     def accumulator(a, b):
         return (b - a) * (function(a) + function(b)) / 2
-    return integral_core(function, *accumulator, left, right, step)
+    return integral_core(function, accumulator, left, right, step)
 
 
 def simpson(function, left, right, step):
     def accumulator(a, b):
         return (b - a) / 6 * (function(a) + function(b) + 4 * function((a + b) / 2))
-    return integral_core(function, *accumulator, left, right, step)
+    return integral_core(function, accumulator, left, right, step)
 
 
 def step_for_interval(left, right, n):
@@ -99,12 +99,12 @@ def solve_task01():
     left = 0
     right = 1
 
-    print rectangle_method(*f1, left, right, 0.1)
-    print rectangle_method(*f1, left, right, 0.05)
-    print trapezoidal_rule(*f1, left, right, 0.1)
-    print trapezoidal_rule(*f1, left, right, 0.05)
-    print simpson(*f1, left, right, 0.1)
-    print simpson(*f1, left, right, 0.05)
+    print rectangle_method(f1, left, right, 0.1)
+    print rectangle_method(f1, left, right, 0.05)
+    print trapezoidal_rule(f1, left, right, 0.1)
+    print trapezoidal_rule(f1, left, right, 0.05)
+    print simpson(f1, left, right, 0.1)
+    print simpson(f1, left, right, 0.05)
     # Rn - ?
     # LATEX TABLES
 
@@ -117,7 +117,7 @@ def solve_task03():
     eps = 0.005
     left = 0
     right = 13  # roundup(sqrt(pi / (4 * eps)))
-    print compute_intergral_with_eps(*trapezoidal_rule, *f3, left, right, eps)
+    print compute_intergral_with_eps(trapezoidal_rule, f3, left, right, eps)
 
 
 # document = LaTeX() uncomment at global instance
