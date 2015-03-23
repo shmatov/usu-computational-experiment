@@ -48,21 +48,6 @@ def simpson(function, left, right, step):
     return integral_core(function, accumulator, left, right, step)
 
 
-def compute_intergral_with_eps(function, function_c2, left, right, eps):
-    pass
-
-
-def dichotomy(f, a, b, eps):
-    x = None
-    assert(sign(f(a)) != sign(f(b)))
-    while abs(b - a) > eps:
-        x = (a + b) / 2.
-        if sign(f(x)) == sign(f(a)):
-            a = x
-        if sign(f(x)) == sign(f(b)):
-            b = x
-    return x
-
 
 def solve_task01():
     left = 0
@@ -86,9 +71,13 @@ def solve_task02():
 def solve_task03():
     eps = 0.005
     left = 0
-    right = round(1 + math.sqrt(math.pi / (4 * eps)))
+    right = round(1 + math.sqrt(math.pi / (4 * eps))) # A(eps)
+    max_f2c = 0.3256314123833 # M2, we know this a hard way ;[
+    # maximize ((18 x^4)/(x^3+1)^3-(6 x)/(x^3+1)^2) tan^(-1)(x)-(6 x^2)/((x^2+1) (x^3+1)^2)-(2 x)/((x^2+1)^2 (x^3+1)) over [0, 14]
+    step = round(1 + math.pow(12 * eps / max_f2c, 1/3))
+
     table = ASCIITable(['compute integral with epsilon'])
-    table.add_row([compute_intergral_with_eps(trapezoidal_rule, f3, left, right, eps)])
+    table.add_row([trapezoidal_rule(f3, left, right, step)])
     print 'TASK03'
     print table
 
