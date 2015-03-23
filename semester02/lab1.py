@@ -37,10 +37,9 @@ print act_intergral
 
 """
 
-B = 1  # random const from my head
-
 
 def f1(x):
+    B = 1  # random const from my head
     return math.sqrt(1 + x + x*x + B)
 
 
@@ -56,9 +55,9 @@ def integral_core(function, accumulate, left, right, step):
     assert(left < right and step > 0)
     integral_acc = 0
     while left < right:
-        step_actual = min(left + step, right) - left
-        integral_acc = integral_acc + accumulate(left, left + step_actual)
-        left = left + step
+        left_actual = min(left + step, right)
+        integral_acc += accumulate(left, left_actual)
+        left = left_actual
     return integral_acc
 
 
@@ -85,26 +84,31 @@ def step_for_interval(left, right, n):
 
 
 def compute_intergral_with_eps(method, function, left, right, eps):
+    def compute_integral(n):
+        return method(function, left, right, step_for_interval(left, right, n))
+
     N = 3  # bullshit
-    prev_integral = method(function, left, right, step_for_interval(left, right, N - 1))
-    current_integral = method(function, left, right, step_for_interval(left, right, N))
+    prev_integral = compute_integral(N - 1)
+    current_integral = compute_integral(N)
     while abs(prev_integral - current_integral) < eps:
-        N = N + 1  # bullshit
-        prev_integral = current_integral
-        current_integral = method(function, left, right, step_for_interval(left, right, N))
+        N += 1  # bullshit
+        prev_integral, current_integral = current_integral, compute_integral(N)
     return current_integral
 
 
 def solve_task01():
     left = 0
     right = 1
-
-    print rectangle_method(f1, left, right, 0.1)
-    print rectangle_method(f1, left, right, 0.05)
-    print trapezoidal_rule(f1, left, right, 0.1)
-    print trapezoidal_rule(f1, left, right, 0.05)
-    print simpson(f1, left, right, 0.1)
-    print simpson(f1, left, right, 0.05)
+    method_and_step = [
+        (rectangle_method, 0.1),
+        (rectangle_method, 0.05),
+        (trapezoidal_rule, 0.1),
+        (trapezoidal_rule, 0.05),
+        (simpson, 0.1),
+        (simpson, 0.05),
+    ]
+    for (method, step) in method_and_step:
+        print method(f1, left, right, step)
     # Rn - ?
     # LATEX TABLES
 
@@ -122,6 +126,9 @@ def solve_task03():
 
 # document = LaTeX() uncomment at global instance
 if __name__ == '__main__':
+    print '-'*20 + 'Task 1'
     solve_task01()
+    print '-'*20 + 'Task 2'
     solve_task02()
+    print '-'*20 + 'Task 3'
     solve_task03()
