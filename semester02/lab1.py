@@ -87,8 +87,9 @@ def solve_task03():
     eps = 0.005
     left = 0
     right = round(1 + math.sqrt(math.pi / (4 * eps)))
-    table = ASCIITable(['TASK03: compute integral with epsilon'])
+    table = ASCIITable(['compute integral with epsilon'])
     table.add_row([compute_intergral_with_eps(trapezoidal_rule, f3, left, right, eps)])
+    print 'TASK03'
     print table
 
 
