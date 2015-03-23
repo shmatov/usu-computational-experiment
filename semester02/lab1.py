@@ -70,7 +70,10 @@ def solve_task02():
     right = 1;
     n = 30
     methods = [rectangle_method, trapezoidal_rule, simpson]
-    table = ASCIITable(['n'] + [y for x in methods for y in (x.func_name, 'error')])
+    headers = [
+        y for x in methods for y in (x.func_name.split('_')[0], 'error')
+    ]
+    table = ASCIITable(['n'] + headers)
     for i in range(1, n + 1):
         step = (right - left) / float(i)
         table_row = [i]
