@@ -67,13 +67,13 @@ def dichotomy(f, a, b, eps):
 def solve_task01():
     left = 0
     right = 1
-    eps = 0.1
+    step = 0.1
     table = ASCIITable(['method', 'Sn[f]', 'S2n[f]', 'Runge'])
     for integral_method in [(rectangle_method, 2), (trapezoidal_rule, 2), (simpson, 4)]:
         integral, algebraic_accuracy = integral_method
-        sn = integral(f1, left, right, eps)
-        s2n = integral(f1, left, right, eps / 2)
-        runge = abs(sn - s2n) / (pow(2, algebraic_accuracy) - 1)
+        sn = integral(f1, left, right, step)
+        s2n = integral(f1, left, right, step / 2)
+        runge = abs(sn - s2n) / (2 ** algebraic_accuracy - 1)
         table.add_row([integral.func_name, sn, s2n, runge])
     print 'TASK01'
     print table
