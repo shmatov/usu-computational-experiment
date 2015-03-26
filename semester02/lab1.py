@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import math
 from table import ASCIITable
+import pylab
 
 
 def sign(num):
@@ -70,9 +71,10 @@ def solve_task02():
     right = 1;
     n = 30
     methods = [rectangle_method, trapezoidal_rule, simpson]
-    headers = [
-        y for x in methods for y in (x.func_name.split('_')[0], 'error')
-    ]
+    method_names = map(_parse_method_name, methods)
+    headers = [y for x in method_names for y in [x, 'error']]
+    errors = {method: [] for method in method_names}
+
     table = ASCIITable(['n'] + headers)
     for i in range(1, n + 1):
         step = (right - left) / float(i)
@@ -80,11 +82,24 @@ def solve_task02():
         for method in methods:
             integral = method(f2, left, right, step)
             error = abs(math.pi / 4 - integral)
+            errors[_parse_method_name(method)].append(error)
             table_row.extend([integral, error])
         table.add_row(table_row)
+    plot_errors(errors)
     print 'TASK02'
     print table
 
+
+def _parse_method_name(method):
+    return method.func_name.split('_')[0]
+
+
+def plot_errors(errors):
+    from pprint import pprint; pprint(errors)
+    for name, values in errors.items():
+        pylab.plot(range(len(values)), values, label=name)
+    pylab.legend()
+    pylab.show()
 
 
 def solve_task03():
