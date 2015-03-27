@@ -95,7 +95,6 @@ def _parse_method_name(method):
 
 
 def plot_errors(errors):
-    from pprint import pprint; pprint(errors)
     for name, values in errors.items():
         pylab.plot(range(len(values)), values, label=name)
     pylab.legend()
