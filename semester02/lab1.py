@@ -67,8 +67,8 @@ def solve_task01():
 
 
 def solve_task02():
-    left = 0;
-    right = 1;
+    left = 0.0
+    right = 1.0
     n = 30
     methods = [rectangle_method, trapezoidal_rule, simpson]
     method_names = map(_parse_method_name, methods)
@@ -81,13 +81,13 @@ def solve_task02():
         table_row = [i]
         for method in methods:
             integral = method(f2, left, right, step)
-            error = abs(math.pi / 4 - integral)
+            error = math.fabs(math.pi / 4 - integral)
             errors[_parse_method_name(method)].append(error)
             table_row.extend([integral, error])
         table.add_row(table_row)
-    plot_errors(errors)
     print 'TASK02'
     print table
+    plot_errors(errors)
 
 
 def _parse_method_name(method):
@@ -115,7 +115,7 @@ def solve_task03():
     print table
 
 
-# document = LaTeX() uncomment at global instance
+
 if __name__ == '__main__':
     solve_task01()
     solve_task02()
