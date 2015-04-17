@@ -22,6 +22,8 @@ def f3(x):
 
 
 def integral_core(function, accumulate, left, right, step):
+    assert(isinstance(left, float))
+    assert(isinstance(right, float))
     assert(left < right and step > 0)
     integral_acc = 0
     while left < right:
@@ -51,8 +53,8 @@ def simpson(function, left, right, step):
 
 
 def solve_task01():
-    left = 0
-    right = 1
+    left = 0.0
+    right = 1.0
     step = 0.1
     table = ASCIITable(['method\computation', 'Sn[f]', 'S2n[f]', 'Runge'])
     for integral_method in [(rectangle_method, 2), (trapezoidal_rule, 2), (simpson, 4)]:
@@ -103,7 +105,7 @@ def plot_errors(errors):
 
 def solve_task03():
     eps = 0.005
-    left = 0
+    left = 0.0
     right = round(1 + math.sqrt(math.pi / (4 * eps))) # A(eps)
     max_f2c = 0.3256314123833 # M2, we know this a hard way ;[
     # maximize ((18 x^4)/(x^3+1)^3-(6 x)/(x^3+1)^2) tan^(-1)(x)-(6 x^2)/((x^2+1) (x^3+1)^2)-(2 x)/((x^2+1)^2 (x^3+1)) over [0, 14]
