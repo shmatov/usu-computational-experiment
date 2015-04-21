@@ -129,6 +129,18 @@ def common_solver(method_description, a, b, steps_count, y0, dy, ddy, dddy, dy_e
 
 # MAIN
 
+def get_plot_list_for_method(method, n):
+    return common_solver(method(),
+            initial_a,
+            initial_b,
+            n,
+            initial_y0,
+            initial_dy,
+            initial_ddy,
+            initial_dddy,
+            initial_euler_backwards)
+
+
 if __name__ == '__main__':
     methods = [
         EXPLICIT_EULER,
@@ -143,20 +155,17 @@ if __name__ == '__main__':
         RUNGE_KUTTA
     ]
 
-    n = 50
+    n = 100
+    benchmark_run_count = 10000
+    for _ in range(benchmark_run_count):
+        for method in methods:
+            plot_list = get_plot_list_for_method(method, n)
 
-    for method in methods:
-        print method.func_name
-        table = ASCIITable(['x', 'y'])
-        pair_list = common_solver(method(),
-            initial_a,
-            initial_b,
-            n,
-            initial_y0,
-            initial_dy,
-            initial_ddy,
-            initial_dddy,
-            initial_euler_backwards)
-        for pair in pair_list:
-            table.add_row([pair[0], pair[1]])
-        print table
+    # # TO SEE IF IT WORK
+    # for method in methods:
+    #     print method.func_name
+    #     table = ASCIITable(['x', 'y'])
+    #     pair_list = get_plot_list_for_method(method, n)
+    #     for pair in pair_list:
+    #         table.add_row([pair[0], pair[1]])
+    #     print table
