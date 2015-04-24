@@ -31,10 +31,6 @@ def initial_euler_backwards(x, y, step):
     return y / (1 - 30 * step * (x + step - 0.2) * (x + step - 0.7))
 
 
-def initial_solution_of_y(x):
-    return 30 * math.pow(math.exp, x * (x ** 2 / 3 - 0.45 * x + 0.14))
-
-
 # ONE STEP CALCULATIONS
 
 def one_step_explicit_euler(x, y, step, dy, **_):
@@ -86,6 +82,11 @@ def one_step_runge_kutta(x, y, step, dy, **kwargs):
     return y + step / 6 * (k_1 + 2 * k_2 + 2 * k_3 + k_4)
 
 
+def analytic_solution(x, *args, **kwargs):
+    return 30 * math.exp(x * (x ** 2 / 3 - 0.45 * x + 0.14))
+    # return math.exp(x * (10 * x ** 2 - 13.5 * x + 4.2))  # wolfram alpha
+
+
 # TIED UP ONE STEP METHODS AND ACCELERATORS
 
 def EXPLICIT_EULER():
@@ -126,6 +127,10 @@ def ADAMS_3_STEPS():
 
 def RUNGE_KUTTA():
     return (one_step_runge_kutta, 0, None)
+
+
+def ANALYTIC_SOLUTION():
+    return (analytic_solution, 0, None)
 
 
 # SOLVER
@@ -198,7 +203,8 @@ if __name__ == '__main__':
         TAYLOR_DEGREE_4,
         ADAMS_2_STEPS,
         ADAMS_3_STEPS,
-        RUNGE_KUTTA
+        RUNGE_KUTTA,
+        ANALYTIC_SOLUTION
     ]
 
     # n = 100
