@@ -28,11 +28,11 @@ def initial_dddy(x, y):
 
 
 def initial_euler_backwards(x, y, step):
-    return y / (1 - step * (x + step - 0.2) * (x + step - 0.7))
+    return y / (1 - 30 * step * (x + step - 0.2) * (x + step - 0.7))
 
 
 def initial_solution_of_y(x):
-    return math.pow(math.exp, x * (x ** 2 / 3 - 0.45 * x + 0.14))
+    return 30 * math.pow(math.exp, x * (x ** 2 / 3 - 0.45 * x + 0.14))
 
 
 # ONE STEP CALCULATIONS
