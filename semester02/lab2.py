@@ -4,10 +4,6 @@ import math
 import pylab
 
 
-def sign(num):
-    return math.copysign(1, num)
-
-
 # TASK INITIAL
 
 initial_y0 = 0.1
@@ -74,7 +70,7 @@ def one_step_adams_three_steps_usage(x, y, step, dy, prev1, prev2, **_):
     return y + step * (23 * dy(x, y) - 16 * dy(x_prev1, y_prev1) + 5 * dy(x_prev2, y_prev2)) / 12
 
 
-def one_step_runge_kutta(x, y, step, dy, **kwargs):
+def one_step_runge_kutta(x, y, step, dy, **_):
     k_1 = dy(x, y)
     k_2 = dy(x + step / 2, y + step / 2 * k_1)
     k_3 = dy(x + step / 2, y + step / 2 * k_2)
@@ -82,9 +78,9 @@ def one_step_runge_kutta(x, y, step, dy, **kwargs):
     return y + step / 6 * (k_1 + 2 * k_2 + 2 * k_3 + k_4)
 
 
-def analytic_solution(x, *args, **kwargs):
-    return 30 * math.exp(x * (x ** 2 / 3 - 0.45 * x + 0.14))
-    # return math.exp(x * (10 * x ** 2 - 13.5 * x + 4.2))  # wolfram alpha
+def analytic_solution(x, y, step, dy, **_):
+    new_x = x + step
+    return math.exp(new_x * (10 * new_x ** 2 - 13.5 * new_x + 4.2))
 
 
 # TIED UP ONE STEP METHODS AND ACCELERATORS
