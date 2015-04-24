@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import math
 # from table import ASCIITable
-import pylab
+import matplotlib.pyplot as plt
 
 
 # TASK INITIAL
@@ -184,16 +184,25 @@ def get_plot_list_for_method(method, n):
     )
 
 
-def plot(methods):
+def plot(methods, steps):
+    plt.figure()
+    ax = plt.subplot(111)
+
     for method_name, points in methods.items():
-        pylab.plot(map(lambda x: x[0], points),
-                   map(lambda x: x[1], points),
-                   label=method_name)
-    pylab.legend()
-    pylab.show()
+        plt.plot(map(lambda x: x[0], points),
+                 map(lambda x: x[1], points),
+                 label=method_name)
+
+    plt.title('steps = {}'.format(steps))
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+
+    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+
+    plt.show(block=False)
 
 
-if __name__ == '__main__':
+def compute(steps):
     methods = [
         EXPLICIT_EULER,
         RECALCULATION_EULER,
@@ -208,25 +217,20 @@ if __name__ == '__main__':
         ANALYTIC_SOLUTION
     ]
 
-    # n = 100
-    # benchmark_run_count = 10000
-    # for _ in range(benchmark_run_count):
-    #     for method in methods:
-    #         plot_list = get_plot_list_for_method(method, n)
-
-    # TO SEE IF IT WORK
-    # for method in methods:
-    #     print method.func_name
-    #     table = ASCIITable(['x', 'y'])
-    #     pair_list = get_plot_list_for_method(method, n)
-    #     for pair in pair_list:
-    #         table.add_row([pair[0], pair[1]])
-    #     print table
-
-    n = 100
     data = {}
     for method in methods:
         method_name = method.func_name
-        points = get_plot_list_for_method(method, n)
+        points = get_plot_list_for_method(
+            method, 10000 if method == ANALYTIC_SOLUTION else steps
+        )
         data[method_name] = points
-    plot(data)
+    plot(data, steps)
+
+
+if __name__ == '__main__':
+        while True:
+            try:
+                steps = int(raw_input('steps = '))
+            except:
+                break
+            compute(steps)
