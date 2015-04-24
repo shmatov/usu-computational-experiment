@@ -27,6 +27,10 @@ def initial_euler_backwards(x, y, step):
     return y / (1 - 30 * step * (x + step - 0.2) * (x + step - 0.7))
 
 
+def initial_solution_of_y(x):
+    return math.exp(x * (10 * x ** 2 - 13.5 * x + 4.2)) / 10
+
+
 # ONE STEP CALCULATIONS
 
 def one_step_explicit_euler(x, y, step, dy, **_):
@@ -78,9 +82,8 @@ def one_step_runge_kutta(x, y, step, dy, **_):
     return y + step / 6 * (k_1 + 2 * k_2 + 2 * k_3 + k_4)
 
 
-def analytic_solution(x, y, step, dy, **_):
-    new_x = x + step
-    return math.exp(new_x * (10 * new_x ** 2 - 13.5 * new_x + 4.2)) / 10
+def one_step_analytic_solution(x, y, step, dy, solution_of_y, **_):
+    return solution_of_y(x + step)
 
 
 # TIED UP ONE STEP METHODS AND ACCELERATORS
@@ -126,12 +129,12 @@ def RUNGE_KUTTA():
 
 
 def ANALYTIC_SOLUTION():
-    return (analytic_solution, 0, None)
+    return (one_step_analytic_solution, 0, None)
 
 
 # SOLVER
 
-def common_solver(method_description, a, b, steps_count, y0, dy, ddy, dddy, dy_euler_backwards):
+def common_solver(method_description, a, b, steps_count, y0, dy, ddy, dddy, dy_euler_backwards, solution_of_y):
     assert(isinstance(a, float))
     assert(isinstance(b, float))
     assert(a < b)
@@ -155,7 +158,8 @@ def common_solver(method_description, a, b, steps_count, y0, dy, ddy, dddy, dy_e
             'dddy': dddy,
             'prev1': pair_list[-2] if len(pair_list) > 1 else None,
             'prev2': pair_list[-3] if len(pair_list) > 2 else None,
-            'dy_euler_backwards': dy_euler_backwards
+            'dy_euler_backwards': dy_euler_backwards,
+            'solution_of_y': solution_of_y
         }
         x, y = x + step, major_method(x, y, step, dy, **additional_method_kwargs)
         pair_list.append((x, y))
@@ -175,7 +179,8 @@ def get_plot_list_for_method(method, n):
         initial_dy,
         initial_ddy,
         initial_dddy,
-        initial_euler_backwards
+        initial_euler_backwards,
+        initial_solution_of_y
     )
 
 
