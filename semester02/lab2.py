@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import math
 # from table import ASCIITable
-# import pylab
+import pylab
 
 
 def sign(num):
@@ -178,6 +178,15 @@ def get_plot_list_for_method(method, n):
     )
 
 
+def plot(methods):
+    for method_name, points in methods.items():
+        pylab.plot(map(lambda x: x[0], points),
+                   map(lambda x: x[1], points),
+                   label=method_name)
+    pylab.legend()
+    pylab.show()
+
+
 if __name__ == '__main__':
     methods = [
         EXPLICIT_EULER,
@@ -192,13 +201,13 @@ if __name__ == '__main__':
         RUNGE_KUTTA
     ]
 
-    n = 100
-    benchmark_run_count = 10000
-    for _ in range(benchmark_run_count):
-        for method in methods:
-            plot_list = get_plot_list_for_method(method, n)
+    # n = 100
+    # benchmark_run_count = 10000
+    # for _ in range(benchmark_run_count):
+    #     for method in methods:
+    #         plot_list = get_plot_list_for_method(method, n)
 
-    # # TO SEE IF IT WORK
+    # TO SEE IF IT WORK
     # for method in methods:
     #     print method.func_name
     #     table = ASCIITable(['x', 'y'])
@@ -206,3 +215,11 @@ if __name__ == '__main__':
     #     for pair in pair_list:
     #         table.add_row([pair[0], pair[1]])
     #     print table
+
+    n = 100
+    data = {}
+    for method in methods:
+        method_name = method.func_name
+        points = get_plot_list_for_method(method, n)
+        data[method_name] = points
+    plot(data)
