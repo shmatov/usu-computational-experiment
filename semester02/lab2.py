@@ -1,34 +1,61 @@
 #!/usr/bin/env python
-import math
-# from table import ASCIITable
+import math  # noqa
 import matplotlib.pyplot as plt
 
 
 # TASK INITIAL
 
-initial_y0 = 0.1
 initial_a = 0.0
 initial_b = 1.0
 
+initial_y0 = 0.5
+# initial_y0 = 0.1
+# initial_y0 = 0.1
+
+variant = 0.4
+
 
 def initial_dy(x, y):
-    return 30 * y * (x - 0.2) * (x - 0.7)
+    # return 30 * y * (x - 0.2) * (x - 0.7)
+    # return 50 * y * (x - 0.6) * (x - 0.85)
+    return -20 * y ** 2 * (x - variant)
 
 
 def initial_ddy(x, y):
-    return 30 * (initial_dy(x, y) * (x - 0.2) * (x - 0.7) + y * (2 * x - 0.9))
+    # return 30 * (initial_dy(x, y) * (x - 0.2) * (x - 0.7) + y * (2 * x - 0.9))
+    # return 50 * (
+    #     initial_dy(x, y) * (x - 0.6) * (x - 0.85) +
+    #     y * (2 * x - 1.45)
+    # )
+    return -20 * (2 * initial_dy(x, y) * (x - variant) + y ** 2)
 
 
 def initial_dddy(x, y):
-    return 30 * (initial_ddy(x, y) * (x - 0.2) * (x - 0.7) + 2 * initial_dy(x, y) * (2 * x - 0.9) + 2 * y)
+    # return 30 * (initial_ddy(x, y) * (x - 0.2) * (x - 0.7) + 2 * initial_dy(x, y) * (2 * x - 0.9) + 2 * y)
+    # return 50 * (
+    #     initial_ddy(x, y) * (x - 0.6) * (x - 0.85) +
+    #     2 * initial_dy(x, y) * (2 * x - 1.45) +
+    #     2 * y
+    # )
+    return -20 * (
+        2 * initial_ddy(x, y) * (x - variant) + 2 * initial_dy(x, y) + 2 * y
+    )
 
 
 def initial_euler_backwards(x, y, step):
-    return y / (1 - 30 * step * (x + step - 0.2) * (x + step - 0.7))
+    # return y / (1 - 30 * step * (x + step - 0.2) * (x + step - 0.7))
+    # return y / (1 - 50 * step * (x + step - 0.6) * (x + step - 0.85))
+    # return 1
+    return (
+        (-1 + math.sqrt(1 + 80 * step * (x + step - variant))) /
+        (40 * step * (x + step - variant))
+    )
 
 
 def initial_solution_of_y(x):
-    return math.exp(x * (10 * x ** 2 - 13.5 * x + 4.2)) / 10
+    # return math.exp(x * (10 * x ** 2 - 13.5 * x + 4.2)) / 10
+    # return math.exp(x * (50 / 3. * x ** 2 - 36.25 * x + 25.5)) / 10
+    return - 0.05 / (variant * x - 0.5 * x ** 2 - 0.1)
 
 
 # ONE STEP CALCULATIONS
@@ -228,9 +255,9 @@ def compute(steps):
 
 
 if __name__ == '__main__':
-        while True:
-            try:
-                steps = int(raw_input('steps = '))
-            except:
-                break
-            compute(steps)
+    while True:
+        try:
+            steps = int(raw_input('steps = '))
+        except:
+            break
+        compute(steps)
