@@ -80,7 +80,7 @@ def one_step_runge_kutta(x, y, step, dy, **_):
 
 def analytic_solution(x, y, step, dy, **_):
     new_x = x + step
-    return math.exp(new_x * (10 * new_x ** 2 - 13.5 * new_x + 4.2))
+    return math.exp(new_x * (10 * new_x ** 2 - 13.5 * new_x + 4.2)) / 10
 
 
 # TIED UP ONE STEP METHODS AND ACCELERATORS
