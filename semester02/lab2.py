@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import math
-from table import ASCIITable
+# from table import ASCIITable
 import pylab
 
 
@@ -14,17 +14,22 @@ initial_y0 = 0.1
 initial_a = 0.0
 initial_b = 1.0
 
+
 def initial_dy(x, y):
     return 30 * y * (x - 0.2) * (x - 0.7)
+
 
 def initial_ddy(x, y):
     return 30 * (initial_dy(x, y) * (x - 0.2) * (x - 0.7) + y * (2 * x - 0.9))
 
+
 def initial_dddy(x, y):
     return 30 * (initial_ddy(x, y) * (x - 0.2) * (x - 0.7) + 2 * initial_dy(x, y) * (2 * x - 0.9) + 2 * y)
 
+
 def initial_euler_backwards(x, y, step):
     return y / (1 - step * (x + step - 0.2) * (x + step - 0.7))
+
 
 def initial_solution_of_y(x):
     return math.pow(math.exp, x * (x ** 2 / 3 - 0.45 * x + 0.14))
@@ -35,34 +40,43 @@ def initial_solution_of_y(x):
 def one_step_explicit_euler(x, y, step, dy, **_):
     return y + step * dy(x, y)
 
+
 def one_step_recalculation_euler(x, y, step, dy, **_):
     y_new = one_step_explicit_euler(x, y, step, dy)
     return y + step * (dy(x, y) + dy(x + step, y_new)) / 2
 
+
 def one_step_implicit_euler(x, y, step, dy, dy_euler_backwards, **_):
     return dy_euler_backwards(x, y, step)
+
 
 def one_step_cauchy(x, y, step, dy, **_):
     y_plus_halfstep = y + step * dy(x, y) / 2
     return y + step * dy(x + step / 2, y_plus_halfstep)
 
+
 def one_step_taylor_degree_2(x, y, step, dy, **_):
     return y + step * dy(x, y)
+
 
 def one_step_taylor_degree_3(x, y, step, dy, ddy, **_):
     return y + step * dy(x, y) + step ** 2 * ddy(x, y)
 
+
 def one_step_taylor_degree_4(x, y, step, dy, ddy, dddy, **_):
     return y + step * dy(x, y) + step ** 2 * ddy(x, y) + step ** 3 * dddy(x, y)
+
 
 def one_step_adams_two_steps_usage(x, y, step, dy, prev1, **_):
     x_prev1, y_prev1 = prev1
     return y + step * (3 * dy(x, y) - dy(x_prev1, y_prev1)) / 2
 
+
 def one_step_adams_three_steps_usage(x, y, step, dy, prev1, prev2, **_):
     x_prev1, y_prev1 = prev1
     x_prev2, y_prev2 = prev2
     return y + step * (23 * dy(x, y) - 16 * dy(x_prev1, y_prev1) + 5 * dy(x_prev2, y_prev2)) / 12
+
 
 def one_step_runge_kutta(x, y, step, dy, **kwargs):
     k_1 = dy(x, y)
@@ -76,22 +90,40 @@ def one_step_runge_kutta(x, y, step, dy, **kwargs):
 
 def EXPLICIT_EULER():
     return (one_step_explicit_euler, 0, None)
+
+
 def RECALCULATION_EULER():
     return (one_step_recalculation_euler, 0, None)
+
+
 def IMPLICIT_EULER():
     return (one_step_implicit_euler, 0, None)
+
+
 def CAUCHY():
     return (one_step_cauchy, 0, None)
+
+
 def TAYLOR_DEGREE_2():
     return (one_step_taylor_degree_2, 0, None)
+
+
 def TAYLOR_DEGREE_3():
     return (one_step_taylor_degree_3, 0, None)
+
+
 def TAYLOR_DEGREE_4():
     return (one_step_taylor_degree_4, 0, None)
+
+
 def ADAMS_2_STEPS():
     return (one_step_adams_two_steps_usage, 1, one_step_recalculation_euler)
+
+
 def ADAMS_3_STEPS():
     return (one_step_adams_three_steps_usage, 2, one_step_recalculation_euler)
+
+
 def RUNGE_KUTTA():
     return (one_step_runge_kutta, 0, None)
 
@@ -133,15 +165,26 @@ def common_solver(method_description, a, b, steps_count, y0, dy, ddy, dddy, dy_e
 # MAIN
 
 def get_plot_list_for_method(method, n):
-    return common_solver(method(),
-            initial_a,
-            initial_b,
-            n,
-            initial_y0,
-            initial_dy,
-            initial_ddy,
-            initial_dddy,
-            initial_euler_backwards)
+    return common_solver(
+        method(),
+        initial_a,
+        initial_b,
+        n,
+        initial_y0,
+        initial_dy,
+        initial_ddy,
+        initial_dddy,
+        initial_euler_backwards
+    )
+
+
+def plot(methods):
+    for method_name, points in methods.items():
+        pylab.plot(map(lambda x: x[0], points),
+                   map(lambda x: x[1], points),
+                   label=method_name)
+    pylab.legend()
+    pylab.show()
 
 
 if __name__ == '__main__':
@@ -158,13 +201,13 @@ if __name__ == '__main__':
         RUNGE_KUTTA
     ]
 
-    n = 100
-    benchmark_run_count = 10000
-    for _ in range(benchmark_run_count):
-        for method in methods:
-            plot_list = get_plot_list_for_method(method, n)
+    # n = 100
+    # benchmark_run_count = 10000
+    # for _ in range(benchmark_run_count):
+    #     for method in methods:
+    #         plot_list = get_plot_list_for_method(method, n)
 
-    # # TO SEE IF IT WORK
+    # TO SEE IF IT WORK
     # for method in methods:
     #     print method.func_name
     #     table = ASCIITable(['x', 'y'])
@@ -172,3 +215,11 @@ if __name__ == '__main__':
     #     for pair in pair_list:
     #         table.add_row([pair[0], pair[1]])
     #     print table
+
+    n = 100
+    data = {}
+    for method in methods:
+        method_name = method.func_name
+        points = get_plot_list_for_method(method, n)
+        data[method_name] = points
+    plot(data)
