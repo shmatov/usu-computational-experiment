@@ -1,12 +1,11 @@
 import math
-from numpy.linalg import solve
-import array
+from numpy.linalg import solve, LinAlgError
 import matplotlib.pyplot as plt
 
 # THE OPTIONS
 
 variant = 4
-n = 5
+n = 10
 
 # CONSTANT CONDITIONS
 
@@ -48,6 +47,7 @@ def pair_list_for_solution():
 def lagrange_internal(last_i, constants, divider):
     assert isinstance(last_i, int)
     assert (len(constants) - 1) <= last_i <= n
+    assert isinstance(divider, float)
     for const in constants:
         assert isinstance(const, float)
     result = [0.0] * (n+1)
@@ -62,28 +62,54 @@ def lagrange_dy_0h(last_i):
     return lagrange_internal(last_i, (-1.0, 1.0), h)
 
 
-def lagrange_dy_0h2(last_i):
-    return lagrange_internal(last_i, (1.0, -4.0, 3.0), 2 * h)
+def lagrange_dy_0h2_by_first(last_i):
+    return lagrange_internal(last_i, (-3.0, 4.0, -1.0), 2.0 * h)
+
+
+def lagrange_dy_0h2_by_second(last_i):
+    return lagrange_internal(last_i, (-2.0, 0.0, 2.0), 2.0 * h)
+
+
+def lagrange_dy_0h2_by_third(last_i):
+    return lagrange_internal(last_i, (1.0, -4.0, 3.0), 2.0 * h)
 
 
 def lagrange_ddy_0h2(last_i):
-    return lagrange_internal(last_i, (1.0, -2.0, 1.0), 2 * h**2)
+    return lagrange_internal(last_i, (1.0, -2.0, 1.0), 2.0 * h**2)
 
 
+lagrange_usage = {
+    "LAGRANGE: y'[O(h)], y''[O(h^2)]": {
+        'dy': lagrange_dy_0h,
+        'ddy': lagrange_ddy_0h2
+    },
+    "LAGRANGE: y'[O(h^2), L'(x[i-2]) by nodes i-2, i-1, i], y''[O(h^2)]": {
+        'dy': lagrange_dy_0h2_by_first,
+        'ddy': lagrange_ddy_0h2
+    },
+    "LAGRANGE: y'[O(h^2), L'(x[i-1]) by nodes i-2, i-1, i], y''[O(h^2)]": {
+        'dy': lagrange_dy_0h2_by_second,
+        'ddy': lagrange_ddy_0h2
+    },
+    "LAGRANGE: y'[O(h^2), L'(x[i]) by nodes i-2, i-1, i], y''[O(h^2)]": {
+        'dy': lagrange_dy_0h2_by_third,
+        'ddy': lagrange_ddy_0h2
+    }
+}
 lagrange_usage_variant1 = {
     'dy': lagrange_dy_0h,
     'ddy': lagrange_ddy_0h2
 }
 lagrange_usage_variant2 = {
-    'dy': lagrange_dy_0h2,
+    'dy': lagrange_dy_0h2_by_third,
     'ddy': lagrange_ddy_0h2
 }
 
 
 def linear_dependence_y0():
     dependence = [0.0] * (n+2)
-    dependence[0] = 1
-    dependence[n+1] = 0
+    dependence[0] = 1.0
+    dependence[n+1] = 0.0
     return dependence
 
 
@@ -97,12 +123,12 @@ def linear_dependence_dyN(lagrange_options):
 
 def linear_dependence_of_ddy(lagrange_options, i):
     ddy_lagrange_to_use = lagrange_options['ddy']
-    dependence = ddy_lagrange_to_use(i)
-    dependence = map(lambda x: -x, dependence)
 
-    dependence[i] += 1
+    dependence = ddy_lagrange_to_use(i)
+    dependence[i] -= 1.0
     x_i = x0 + i * h
-    dependence.append(-(2 * alpha + 2 + alpha * x_i * (1 - x_i)))
+    dependence.append(2 * alpha + 2 + alpha * x_i * (1 - x_i))
+
     return dependence
 
 
@@ -153,8 +179,11 @@ def plot(data, steps):
 
 def main():
     data = {}
-    data['LAGRANGE[O(h)]'] = solve_dependencies_matrix(get_all_dependencies_matrix(lagrange_usage_variant1))
-    data['LAGRANGE[O(h^2)]'] = solve_dependencies_matrix(get_all_dependencies_matrix(lagrange_usage_variant2))
+    for name, lagrange_options in lagrange_usage.items():
+        try:
+            data[name] = solve_dependencies_matrix(get_all_dependencies_matrix(lagrange_options))
+        except LinAlgError:
+            pass
     data['ANALYTIC'] = pair_list_for_solution()
 
     plot(data, n)
