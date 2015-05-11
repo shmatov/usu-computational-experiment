@@ -79,8 +79,6 @@ lagrange_usage_variant2 = {
     'ddy': lagrange_ddy_0h2
 }
 
-current_lagrange_usage_variants = [lagrange_usage_variant1, lagrange_usage_variant2]
-
 
 def linear_dependence_y0():
     dependence = [0.0] * (n+2)
