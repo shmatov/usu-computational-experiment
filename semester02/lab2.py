@@ -16,20 +16,26 @@ variant = 4
 
 task_a_initial_y0 = 0.1
 
+
 def task_a_initial_dy(x, y):
     return 30 * y * (x - 0.2) * (x - 0.7)
+
 
 def task_a_initial_ddy(x, y):
     return 30 * (task_a_initial_dy(x, y) * (x - 0.2) * (x - 0.7) + y * (2 * x - 0.9))
 
+
 def task_a_initial_dddy(x, y):
     return 30 * (task_a_initial_ddy(x, y) * (x - 0.2) * (x - 0.7) + 2 * task_a_initial_dy(x, y) * (2 * x - 0.9) + 2 * y)
+
 
 def task_a_initial_euler_backwards(x, y, step):
     return y / (1 - 30 * step * (x + step - 0.2) * (x + step - 0.7))
 
+
 def task_a_initial_solution_of_y(x):
     return math.exp(x * (10 * x ** 2 - 13.5 * x + 4.2)) / 10
+
 
 TASK_A = {
     'a': initial_a,
@@ -46,14 +52,17 @@ TASK_A = {
 
 task_b_initial_y0 = 0.1
 
+
 def task_b_initial_dy(x, y):
     return 50 * y * (x - 0.6) * (x - 0.85)
+
 
 def task_b_initial_ddy(x, y):
     return 50 * (
         task_b_initial_dy(x, y) * (x - 0.6) * (x - 0.85) +
         y * (2 * x - 1.45)
     )
+
 
 def task_b_initial_dddy(x, y):
     return 50 * (
@@ -62,11 +71,14 @@ def task_b_initial_dddy(x, y):
         2 * y
     )
 
+
 def task_b_initial_euler_backwards(x, y, step):
     return y / (1 - 50 * step * (x + step - 0.6) * (x + step - 0.85))
 
+
 def task_b_initial_solution_of_y(x):
     return math.exp(x * (50 / 3. * x ** 2 - 36.25 * x + 25.5)) / 10
+
 
 TASK_B = {
     'a': initial_a,
@@ -84,16 +96,20 @@ TASK_B = {
 
 task_c_initial_y0 = 0.5
 
+
 def task_c_initial_dy(x, y):
     return -20 * y ** 2 * (x - (variant * 0.1))
 
+
 def task_c_initial_ddy(x, y):
     return -20 * (2 * task_c_initial_dy(x, y) * (x - (variant * 0.1)) + y ** 2)
+
 
 def task_c_initial_dddy(x, y):
     return -20 * (
         2 * task_c_initial_ddy(x, y) * (x - (variant * 0.1)) + 2 * task_c_initial_dy(x, y) + 2 * y
     )
+
 
 def task_c_initial_euler_backwards(x, y, step):
     return (
@@ -101,8 +117,10 @@ def task_c_initial_euler_backwards(x, y, step):
         (40 * step * (x + step - (variant * 0.1)))
     )
 
+
 def task_c_initial_solution_of_y(x):
     return - 0.05 / ((variant * 0.1) * x - 0.5 * x ** 2 - 0.1)
+
 
 TASK_C = {
     'a': initial_a,
@@ -132,8 +150,8 @@ def one_step_implicit_euler(x, y, step, dy, euler_backwards, **_):
 
 
 def one_step_cauchy(x, y, step, dy, **_):
-    y_plus_halfstep = y + step * dy(x, y) / 2
-    return y + step * dy(x + step / 2, y_plus_halfstep)
+    y_plus_half_step = y + step * dy(x, y) / 2
+    return y + step * dy(x + step / 2, y_plus_half_step)
 
 
 def one_step_taylor_degree_2(x, y, step, dy, **_):
@@ -173,7 +191,7 @@ def one_step_analytic_solution(x, y, step, dy, solution_of_y, **_):
 
 # TIED UP ONE STEP METHODS AND ACCELERATORS
 
-methods = {
+METHODS = {
     'EXPLICIT_EULER': (one_step_explicit_euler, 0, None),
     'RECALCULATION_EULER': (one_step_recalculation_euler, 0, None),
     'IMPLICIT_EULER': (one_step_implicit_euler, 0, None),
@@ -191,11 +209,11 @@ methods = {
 # SOLVER
 
 def common_solver(method, steps_count, a, b, y0, dy, ddy, dddy, euler_backwards, solution_of_y):
-    assert(isinstance(a, float))
-    assert(isinstance(b, float))
-    assert(a < b)
-    assert(isinstance(steps_count, int) and steps_count > 2)
-    assert(isinstance(y0, float))
+    assert (isinstance(a, float))
+    assert (isinstance(b, float))
+    assert (a < b)
+    assert (isinstance(steps_count, int) and steps_count > 2)
+    assert (isinstance(y0, float))
 
     x = a
     y = y0
@@ -245,7 +263,7 @@ def plot(methods, steps):
 
 def compute(steps):
     data = {}
-    for name, method in methods.iteritems():
+    for name, method in METHODS.iteritems():
         points = common_solver(
             method,
             steps if name != 'ANALYTIC_SOLUTION' else 10000,
