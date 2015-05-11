@@ -112,10 +112,17 @@ def task_c_initial_dddy(x, y):
 
 
 def task_c_initial_euler_backwards(x, y, step):
-    return (
-        (-1 + math.sqrt(1 + 80 * step * (x + step - (variant * 0.1)) * y)) /
-        (40 * step * (x + step - (variant * 0.1)))
-    )
+    def result_with_sign(positive):
+        sign = 1 if positive else -1
+        return (
+            (-1 + sign * math.sqrt(1 + 80 * step * (x + step - (variant * 0.1)) * y)) /
+            (40 * step * (x + step - (variant * 0.1)))
+        )
+    possible_new_y = [result_with_sign(True), result_with_sign(False)]
+    new_y = min(map(lambda some_y: (math.fabs(some_y - y), some_y), possible_new_y))[1]
+
+    # print ("x: %s, y: %s, step: %s, possible_new_y: %s" % (x, y, step, possible_new_y))
+    return new_y
 
 
 def task_c_initial_solution_of_y(x):
