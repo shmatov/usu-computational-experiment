@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 # THE OPTIONS
 
 variant = 1
-n = 3
+n = 10
 
 # CONSTANT CONDITIONS
 
@@ -26,8 +26,6 @@ def initial_ddy(x, y, dy):
 
 
 def initial_solution_of_y(x):
-    # e2 = math.exp(2)
-    # return alpha * x * (x-1) + 2 * (e2 - 1) * math.sinh(x) / (1 + e2)
     return -2 + alpha * x * (x - 1) + math.exp(-x) + math.exp(x)
 
 
@@ -84,18 +82,18 @@ lagrange_usage = {
         'dy': lagrange_dy_0h,
         'ddy': lagrange_ddy_0h2
     },
-    # "LAGRANGE: y'[O(h^2), L'(x[i-2]) by nodes i-2, i-1, i], y''[O(h^2)]": {
-    #     'dy': lagrange_dy_0h2_by_first,
-    #     'ddy': lagrange_ddy_0h2
-    # },
-    # "LAGRANGE: y'[O(h^2), L'(x[i-1]) by nodes i-2, i-1, i], y''[O(h^2)]": {
-    #     'dy': lagrange_dy_0h2_by_second,
-    #     'ddy': lagrange_ddy_0h2
-    # },
-    # "LAGRANGE: y'[O(h^2), L'(x[i]) by nodes i-2, i-1, i], y''[O(h^2)]": {
-    #     'dy': lagrange_dy_0h2_by_third,
-    #     'ddy': lagrange_ddy_0h2
-    # }
+    "LAGRANGE: y'[O(h^2), L'(x[i-2]) by nodes i-2, i-1, i], y''[O(h^2)]": {
+        'dy': lagrange_dy_0h2_by_first,
+        'ddy': lagrange_ddy_0h2
+    },
+    "LAGRANGE: y'[O(h^2), L'(x[i-1]) by nodes i-2, i-1, i], y''[O(h^2)]": {
+        'dy': lagrange_dy_0h2_by_second,
+        'ddy': lagrange_ddy_0h2
+    },
+    "LAGRANGE: y'[O(h^2), L'(x[i]) by nodes i-2, i-1, i], y''[O(h^2)]": {
+        'dy': lagrange_dy_0h2_by_third,
+        'ddy': lagrange_ddy_0h2
+    }
 }
 lagrange_usage_variant1 = {
     'dy': lagrange_dy_0h,
