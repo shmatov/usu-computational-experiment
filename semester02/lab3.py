@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 
 # THE OPTIONS
 
-variant = 4
-n = 10
+variant = 1
+n = 3
 
 # CONSTANT CONDITIONS
 
@@ -26,8 +26,9 @@ def initial_ddy(x, y, dy):
 
 
 def initial_solution_of_y(x):
-    e2 = math.exp(2)
-    return alpha * x * (x-1) + 2 * (e2 - 1) * math.sinh(x) / (1 + e2)
+    # e2 = math.exp(2)
+    # return alpha * x * (x-1) + 2 * (e2 - 1) * math.sinh(x) / (1 + e2)
+    return -2 + alpha * x * (x - 1) + math.exp(-x) + math.exp(x)
 
 
 def pair_list_for_solution():
@@ -75,7 +76,7 @@ def lagrange_dy_0h2_by_third(last_i):
 
 
 def lagrange_ddy_0h2(last_i):
-    return lagrange_internal(last_i, (1.0, -2.0, 1.0), 2.0 * h**2)
+    return lagrange_internal(last_i, (1.0, -2.0, 1.0), h**2)
 
 
 lagrange_usage = {
@@ -83,18 +84,18 @@ lagrange_usage = {
         'dy': lagrange_dy_0h,
         'ddy': lagrange_ddy_0h2
     },
-    "LAGRANGE: y'[O(h^2), L'(x[i-2]) by nodes i-2, i-1, i], y''[O(h^2)]": {
-        'dy': lagrange_dy_0h2_by_first,
-        'ddy': lagrange_ddy_0h2
-    },
-    "LAGRANGE: y'[O(h^2), L'(x[i-1]) by nodes i-2, i-1, i], y''[O(h^2)]": {
-        'dy': lagrange_dy_0h2_by_second,
-        'ddy': lagrange_ddy_0h2
-    },
-    "LAGRANGE: y'[O(h^2), L'(x[i]) by nodes i-2, i-1, i], y''[O(h^2)]": {
-        'dy': lagrange_dy_0h2_by_third,
-        'ddy': lagrange_ddy_0h2
-    }
+    # "LAGRANGE: y'[O(h^2), L'(x[i-2]) by nodes i-2, i-1, i], y''[O(h^2)]": {
+    #     'dy': lagrange_dy_0h2_by_first,
+    #     'ddy': lagrange_ddy_0h2
+    # },
+    # "LAGRANGE: y'[O(h^2), L'(x[i-1]) by nodes i-2, i-1, i], y''[O(h^2)]": {
+    #     'dy': lagrange_dy_0h2_by_second,
+    #     'ddy': lagrange_ddy_0h2
+    # },
+    # "LAGRANGE: y'[O(h^2), L'(x[i]) by nodes i-2, i-1, i], y''[O(h^2)]": {
+    #     'dy': lagrange_dy_0h2_by_third,
+    #     'ddy': lagrange_ddy_0h2
+    # }
 }
 lagrange_usage_variant1 = {
     'dy': lagrange_dy_0h,
@@ -124,7 +125,7 @@ def linear_dependence_dyN(lagrange_options):
 def linear_dependence_of_ddy(lagrange_options, i):
     ddy_lagrange_to_use = lagrange_options['ddy']
 
-    dependence = ddy_lagrange_to_use(i)
+    dependence = ddy_lagrange_to_use(i+1)
     dependence[i] -= 1.0
     x_i = x0 + i * h
     dependence.append(2 * alpha + 2 + alpha * x_i * (1 - x_i))
@@ -134,16 +135,26 @@ def linear_dependence_of_ddy(lagrange_options, i):
 
 def get_all_dependencies_matrix(lagrange_options):
     matrix = [linear_dependence_y0()]
-    for i in range(2, n+1):
+    for i in range(1, n):
         matrix.append(linear_dependence_of_ddy(lagrange_options, i))
     matrix.append(linear_dependence_dyN(lagrange_options))
     return matrix
 
 
+def print_mx_line_specific(mx_line):
+    first = None
+    for elem in mx_line:
+        first = elem
+        if first != 0.0:
+            break
+    mx_line = map(lambda x: x / first, mx_line)
+    print(mx_line)
+
+
 def solve_dependencies_matrix(mx):
     vec = []
     for mx_line in mx:
-        print(mx_line)
+        print_mx_line_specific(mx_line)
         vec.append(mx_line[-1])
         del mx_line[-1]
     solution = solve(mx, vec)
