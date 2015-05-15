@@ -1,7 +1,8 @@
+from collections import defaultdict
 import math
+import sys
 
 from numpy.linalg import solve, LinAlgError
-from numpy import linspace
 import matplotlib.pyplot as plt
 from scipy import interpolate
 
@@ -35,10 +36,15 @@ def initial_solution_of_y(x):
     return -2 + alpha * x * (x - 1) + math.exp(-x) + math.exp(x)
 
 
-def pair_list_for_solution():
-    steps = 10000
-    return map(lambda x: (x, initial_solution_of_y(x)),
-               linspace(x0, xN, steps))
+def pair_list_for_solution(n2):
+    h2 = (xN - x0) / n2
+    x = x0
+    pair_list = []
+    for _ in range(n2 + 1):
+        y = initial_solution_of_y(x)
+        pair_list.append((x, y))
+        x += h2
+    return pair_list
 
 
 # Tridiagonal matrix solution way
@@ -146,7 +152,7 @@ def print_mx_line_specific(mx_line):
         if first != 0.0:
             break
     mx_line = map(lambda x: x / first, mx_line)
-    print(mx_line)
+    # print(mx_line)
 
 
 def solve_dependencies_matrix(mx):
@@ -232,7 +238,7 @@ def shoot_method_solution(fxyy):
 # MAIN
 
 
-def plot(data, steps):
+def plot(title, data, block=True):
     plt.figure()
     ax = plt.subplot(1, 1, 1)
 
@@ -241,14 +247,14 @@ def plot(data, steps):
                  map(lambda x: x[1], points),
                  label=method_name)
 
-    plt.title('steps = {}'.format(steps))
+    plt.title(title)
     box = ax.get_position()
     ax.set_position([box.x0, box.y0, box.width, box.height * 0.8])
 
     ax.legend(bbox_to_anchor=(0., 1.1, 1., 0), loc=3, mode="expand",
               borderaxespad=0.)
 
-    plt.show()
+    plt.show(block=block)
 
 
 def compute(steps):
@@ -263,15 +269,68 @@ def compute(steps):
             )
         except LinAlgError:
             pass
-    data['ANALYTIC'] = pair_list_for_solution()
     data['SHOOTING METHOD'] = shoot_method_solution(initial_ddy)
-    plot(data, n)
 
     n = old_n
+    return data
+
+
+def compute_errors(steps_list):
+    methods_errors = defaultdict(list)
+    for steps in steps_list:
+        methods = compute(steps)
+        analytic = pair_list_for_solution(steps)
+        for method_name, points in methods.iteritems():
+            assert len(points) == len(analytic)
+            assert all(
+                map(
+                    lambda (x1, x2): x1 == x2,
+                    zip(
+                        map(lambda (x, y): x, points),
+                        map(lambda (x, y): x, analytic)
+                    )
+                )
+            )
+
+            error = sum(
+                map(
+                    lambda (y1, y2): (y1 - y2) ** 2,
+                    zip(
+                        map(lambda (x, y): y, points),
+                        map(lambda (x, y): y, analytic)
+                    )
+                )
+            )
+            methods_errors[method_name].append(
+                (steps, math.sqrt(error) / steps)
+            )
+    return methods_errors
+
+
+
+def get_mode():
+    try:
+        if sys.argv[1] == 'errors':
+            return 'errors'
+    except IndexError:
+        pass
+    return 'interactive'
 
 
 def main():
-    compute(n)
+    mode = get_mode()
+    if mode == 'errors':
+        errors = compute_errors(range(10, 100, 5))
+        plot('errors', errors)
+
+    elif mode == 'interactive':
+        steps = n
+        data = compute(steps)
+        plot('steps = {}'.format(steps), dict(
+            {
+                'ANALYTIC': pair_list_for_solution(10000)
+            }.items() + data.items()
+        ))
 
 
 if __name__ == '__main__':
