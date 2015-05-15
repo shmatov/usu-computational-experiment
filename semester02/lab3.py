@@ -9,7 +9,7 @@ from scipy import interpolate
 # THE OPTIONS
 
 variant = 1
-n = 10
+n = 50
 
 # CONSTANT CONDITIONS
 
@@ -92,10 +92,10 @@ lagrange_usage = {
         'dy': lagrange_dy_0h2_by_first,
         'ddy': lagrange_ddy_0h2
     },
-    "LAGRANGE: y'[O(h^2), L'(x[i-1]) by nodes i-2, i-1, i], y''[O(h^2)]": {
-        'dy': lagrange_dy_0h2_by_second,
-        'ddy': lagrange_ddy_0h2
-    },
+    # "LAGRANGE: y'[O(h^2), L'(x[i-1]) by nodes i-2, i-1, i], y''[O(h^2)]": {
+    #     'dy': lagrange_dy_0h2_by_second,
+    #     'ddy': lagrange_ddy_0h2
+    # },
     "LAGRANGE: y'[O(h^2), L'(x[i]) by nodes i-2, i-1, i], y''[O(h^2)]": {
         'dy': lagrange_dy_0h2_by_third,
         'ddy': lagrange_ddy_0h2
@@ -269,7 +269,7 @@ def compute(steps):
             )
         except LinAlgError:
             pass
-    data['SHOOTING METHOD'] = shoot_method_solution(initial_ddy)
+    # data['SHOOTING METHOD'] = shoot_method_solution(initial_ddy)
 
     n = old_n
     return data
