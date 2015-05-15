@@ -3,6 +3,7 @@ import math
 from numpy.linalg import solve, LinAlgError
 from numpy import linspace
 import matplotlib.pyplot as plt
+from scipy import interpolate
 
 # THE OPTIONS
 
@@ -188,7 +189,10 @@ eps = 0.00001
 
 def interpolate_x_in_pair_list(x_fx_pairs, x_to_calculate):
     # lagrange by nodes
-    return 0.0
+    xs = map(lambda pair: pair[0], x_fx_pairs)
+    ys = map(lambda pair: pair[1], x_fx_pairs)
+    xs[-1] = 1.0  # hack because of fucking 0.9999999999999
+    return interpolate.interp1d(xs, ys)(x_to_calculate)
 
 
 def calculate_next_phi(mu_n, fxyy):
@@ -199,8 +203,8 @@ def calculate_next_phi(mu_n, fxyy):
 def calculate_next_dphi(mu_n, fxyy):
     y_mu_n = cauchy_solution_of_fxyy(fxyy, y0, mu_n)[0]
     y_mu_n_prev_step = cauchy_solution_of_fxyy(fxyy, y0, mu_n - h())[0]
-    r = 1.0  # WHY? because the analytic of our fxyy says so
-    y = 0.0  # WHY? because the analytic of our fxyy says so
+    r = 1.0  # WHY? because the analytic of our fxyy says so: y = mu, y'_mu = 1
+    y = 0.0  # WHY? because the analytic of our fxyy says so: other condition
     x = x0
     for _ in range(n):
         x += h()
@@ -220,7 +224,7 @@ def shoot_method_solution(fxyy):
         phi = calculate_next_phi(mu_n, fxyy)
         dphi = calculate_next_dphi(mu_n, fxyy)
         mu_n -= phi / dphi
-        if abs(phi) > eps:
+        if abs(phi) < eps:
             break
     return cauchy_solution_of_fxyy(fxyy, y0, mu_n)[0]
 
@@ -272,12 +276,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
-
-
-
-
-
-
