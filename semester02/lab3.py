@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 # THE OPTIONS
 
 variant = 1
-n = 2
+n = 10
 
 # CONSTANT CONDITIONS
 
@@ -26,7 +26,7 @@ def h():
 
 # TASK
 
-def initial_ddy(x, y, dy):
+def initial_ddy(x, y):
     return y + 2 * alpha + 2 + alpha * x * (1 - x)
 
 
@@ -198,7 +198,7 @@ def calculate_next_phi(mu_n, fxyy):
 
 def calculate_next_dphi(mu_n, fxyy):
     y_mu_n = cauchy_solution_of_fxyy(fxyy, y0, mu_n)[0]
-    y_mu_n_prev_step = cauchy_solution_of_fxyy(fxyy, y0, mu_n - h)[0]
+    y_mu_n_prev_step = cauchy_solution_of_fxyy(fxyy, y0, mu_n - h())[0]
     r = 1.0  # WHY? because the analytic of our fxyy says so
     y = 0.0  # WHY? because the analytic of our fxyy says so
     x = x0
@@ -260,13 +260,14 @@ def compute(steps):
         except LinAlgError:
             pass
     data['ANALYTIC'] = pair_list_for_solution()
+    data['SHOOTING METHOD'] = shoot_method_solution(initial_ddy)
     plot(data, n)
 
     n = old_n
 
 
 def main():
-    compute(2)
+    compute(n)
 
 
 if __name__ == '__main__':
