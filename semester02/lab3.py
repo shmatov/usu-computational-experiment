@@ -19,6 +19,7 @@ alpha = 2 + 0.1 * variant
 y0 = 0.0
 dyN = math.e - (1.0 / math.e) + alpha
 
+
 def h():
     return (xN - x0) / n
 
@@ -47,7 +48,7 @@ def lagrange_internal(last_i, constants, divider):
     assert isinstance(divider, float)
     for const in constants:
         assert isinstance(const, float)
-    result = [0.0] * (n+1)
+    result = [0.0] * (n + 1)
     for const in reversed(constants):
         result[last_i] = const
         last_i -= 1
@@ -72,7 +73,7 @@ def lagrange_dy_0h2_by_third(last_i):
 
 
 def lagrange_ddy_0h2(last_i):
-    return lagrange_internal(last_i, (1.0, -2.0, 1.0), h()**2)
+    return lagrange_internal(last_i, (1.0, -2.0, 1.0), h() ** 2)
 
 
 lagrange_usage = {
@@ -104,9 +105,9 @@ lagrange_usage_variant2 = {
 
 
 def linear_dependence_y0():
-    dependence = [0.0] * (n+2)
+    dependence = [0.0] * (n + 2)
     dependence[0] = 1.0
-    dependence[n+1] = 0.0
+    dependence[n + 1] = 0.0
     return dependence
 
 
@@ -121,7 +122,7 @@ def linear_dependence_dyN(lagrange_options):
 def linear_dependence_of_ddy(lagrange_options, i):
     ddy_lagrange_to_use = lagrange_options['ddy']
 
-    dependence = ddy_lagrange_to_use(i+1)
+    dependence = ddy_lagrange_to_use(i + 1)
     dependence[i] -= 1.0
     x_i = x0 + i * h()
     dependence.append(2 * alpha + 2 + alpha * x_i * (1 - x_i))
@@ -161,6 +162,67 @@ def solve_dependencies_matrix(mx):
         pair_list.append((x, y))
         x += h()
     return pair_list
+
+
+# THE SHOOTING METHOD
+
+
+def cauchy_solution_of_fxyy(fxyy, y_start, dy_start):
+    x = x0
+    y, r = y_start, dy_start
+    assert isinstance(y, float)
+    assert isinstance(r, float)
+    y_pairs_list = [(x, y)]
+    r_pairs_list = [(x, r)]
+    for _ in range(n):
+        x += h()
+        y += h() * r
+        r = h() * fxyy(x, y)
+        y_pairs_list.append((x, y))
+        r_pairs_list.append((x, r))
+    return y_pairs_list, r_pairs_list
+
+
+eps = 0.00001
+
+
+def interpolate_x_in_pair_list(x_fx_pairs, x_to_calculate):
+    # lagrange by nodes
+    return 0.0
+
+
+def calculate_next_phi(mu_n, fxyy):
+    cauchy_solution = cauchy_solution_of_fxyy(fxyy, y0, mu_n)[1]
+    return interpolate_x_in_pair_list(cauchy_solution, xN) - dyN
+
+
+def calculate_next_dphi(mu_n, fxyy):
+    y_mu_n = cauchy_solution_of_fxyy(fxyy, y0, mu_n)[0]
+    y_mu_n_prev_step = cauchy_solution_of_fxyy(fxyy, y0, mu_n - h)[0]
+    r = 1.0  # WHY? because the analytic of our fxyy says so
+    y = 0.0  # WHY? because the analytic of our fxyy says so
+    x = x0
+    for _ in range(n):
+        x += h()
+        y += h() * r
+        r += h() * calculate_dy_by_ymu_diff(y_mu_n, y_mu_n_prev_step, x)
+    return r
+
+
+def calculate_dy_by_ymu_diff(y_mu, y_mu_prev_step, x):
+    return (interpolate_x_in_pair_list(y_mu, x) - interpolate_x_in_pair_list(y_mu_prev_step, x)) / h()
+
+
+def shoot_method_solution(fxyy):
+    mu_n = 0.0  # Kandoba said that
+
+    while True:
+        phi = calculate_next_phi(mu_n, fxyy)
+        dphi = calculate_next_dphi(mu_n, fxyy)
+        mu_n -= phi / dphi
+        if abs(phi) > eps:
+            break
+    return cauchy_solution_of_fxyy(fxyy, y0, mu_n)[0]
 
 
 # MAIN
