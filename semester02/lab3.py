@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 # THE OPTIONS
 
 variant = 1
-n = 10
+n = 2
 
 # CONSTANT CONDITIONS
 
@@ -172,7 +172,7 @@ def solve_dependencies_matrix(mx):
 
 def plot(data, steps):
     plt.figure()
-    ax = plt.subplot(111)
+    ax = plt.subplot(1, 1, 1)
 
     for method_name, points in data.items():
         plt.plot(map(lambda x: x[0], points),
@@ -181,9 +181,10 @@ def plot(data, steps):
 
     plt.title('steps = {}'.format(steps))
     box = ax.get_position()
-    ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+    ax.set_position([box.x0, box.y0, box.width, box.height * 0.8])
 
-    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    ax.legend(bbox_to_anchor=(0., 1.1, 1., 0), loc=3, mode="expand",
+              borderaxespad=0.)
 
     plt.show()
 
@@ -195,7 +196,9 @@ def compute(steps):
     data = {}
     for name, lagrange_options in lagrange_usage.items():
         try:
-            data[name] = solve_dependencies_matrix(get_all_dependencies_matrix(lagrange_options))
+            data[name] = solve_dependencies_matrix(
+                get_all_dependencies_matrix(lagrange_options)
+            )
         except LinAlgError:
             pass
     data['ANALYTIC'] = pair_list_for_solution()
