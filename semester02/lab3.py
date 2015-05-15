@@ -1,5 +1,7 @@
 import math
+
 from numpy.linalg import solve, LinAlgError
+from numpy import linspace
 import matplotlib.pyplot as plt
 
 # THE OPTIONS
@@ -32,15 +34,9 @@ def initial_solution_of_y(x):
 
 
 def pair_list_for_solution():
-    n2 = 10000
-    h2 = (xN - x0) / n2
-    x = x0
-    pair_list = []
-    for _ in range(n2 + 1):
-        y = initial_solution_of_y(x)
-        pair_list.append((x, y))
-        x += h2
-    return pair_list
+    steps = 10000
+    return map(lambda x: (x, initial_solution_of_y(x)),
+               linspace(x0, xN, steps))
 
 
 # Tridiagonal matrix solution way
