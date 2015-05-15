@@ -34,8 +34,7 @@ def initial_solution_of_y(x):
     return -2 + alpha * x * (x - 1) + math.exp(-x) + math.exp(x)
 
 
-def pair_list_for_solution():
-    steps = 10000
+def pair_list_for_solution(steps):
     return map(lambda x: (x, initial_solution_of_y(x)),
                linspace(x0, xN, steps))
 
@@ -228,7 +227,7 @@ def shoot_method_solution(fxyy):
 # MAIN
 
 
-def plot(data, steps):
+def plot(title, data, block=True):
     plt.figure()
     ax = plt.subplot(1, 1, 1)
 
@@ -237,14 +236,14 @@ def plot(data, steps):
                  map(lambda x: x[1], points),
                  label=method_name)
 
-    plt.title('steps = {}'.format(steps))
+    plt.title(title)
     box = ax.get_position()
     ax.set_position([box.x0, box.y0, box.width, box.height * 0.8])
 
     ax.legend(bbox_to_anchor=(0., 1.1, 1., 0), loc=3, mode="expand",
               borderaxespad=0.)
 
-    plt.show()
+    plt.show(block=block)
 
 
 def compute(steps):
@@ -259,15 +258,26 @@ def compute(steps):
             )
         except LinAlgError:
             pass
-    data['ANALYTIC'] = pair_list_for_solution()
     data['SHOOTING METHOD'] = shoot_method_solution(initial_ddy)
-    plot(data, n)
 
     n = old_n
+    return data
+
+
+def errors(data):
+    for name, points in data:
+        pass
 
 
 def main():
-    compute(n)
+    steps = n
+
+    data = compute(steps)
+    plot('steps = {}'.format(steps), dict(
+        {
+            'ANALYTIC': pair_list_for_solution(10000)
+        }.items() + data.items()
+    ))
 
 
 if __name__ == '__main__':
