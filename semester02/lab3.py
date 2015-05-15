@@ -173,6 +173,7 @@ def solve_dependencies_matrix(mx):
 
 # THE SHOOTING METHOD
 
+eps = 0.00001
 
 def cauchy_solution_of_fxyy(fxyy, y_start, dy_start):
     x = x0
@@ -184,20 +185,22 @@ def cauchy_solution_of_fxyy(fxyy, y_start, dy_start):
     for _ in range(n):
         x += h()
         y += h() * r
-        r = h() * fxyy(x, y)
+        r += h() * fxyy(x, y)
         y_pairs_list.append((x, y))
         r_pairs_list.append((x, r))
     return y_pairs_list, r_pairs_list
 
 
-eps = 0.00001
+
 
 
 def interpolate_x_in_pair_list(x_fx_pairs, x_to_calculate):
     # lagrange by nodes
     xs = map(lambda pair: pair[0], x_fx_pairs)
     ys = map(lambda pair: pair[1], x_fx_pairs)
-    xs[-1] = 1.0  # hack because of fucking 0.9999999999999
+    xs[-1] = xN  # hack because of fucking 0.9999999999999
+    x_to_calculate = max(x_to_calculate, x0)
+    x_to_calculate = min(x_to_calculate, xN)
     return interpolate.interp1d(xs, ys)(x_to_calculate)
 
 
@@ -269,7 +272,7 @@ def compute(steps):
             )
         except LinAlgError:
             pass
-    # data['SHOOTING METHOD'] = shoot_method_solution(initial_ddy)
+    data['SHOOTING METHOD'] = shoot_method_solution(initial_ddy)
 
     n = old_n
     return data
