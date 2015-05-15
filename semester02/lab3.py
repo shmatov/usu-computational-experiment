@@ -12,11 +12,13 @@ n = 10
 x0 = 0.0
 xN = 1.0
 
-h = (xN - x0) / n
 alpha = 2 + 0.1 * variant
 
 y0 = 0.0
 dyN = math.e - (1.0 / math.e) + alpha
+
+def h():
+    return (xN - x0) / n
 
 
 # TASK
@@ -58,23 +60,23 @@ def lagrange_internal(last_i, constants, divider):
 
 
 def lagrange_dy_0h(last_i):
-    return lagrange_internal(last_i, (-1.0, 1.0), h)
+    return lagrange_internal(last_i, (-1.0, 1.0), h())
 
 
 def lagrange_dy_0h2_by_first(last_i):
-    return lagrange_internal(last_i, (-3.0, 4.0, -1.0), 2.0 * h)
+    return lagrange_internal(last_i, (-3.0, 4.0, -1.0), 2.0 * h())
 
 
 def lagrange_dy_0h2_by_second(last_i):
-    return lagrange_internal(last_i, (-2.0, 0.0, 2.0), 2.0 * h)
+    return lagrange_internal(last_i, (-2.0, 0.0, 2.0), 2.0 * h())
 
 
 def lagrange_dy_0h2_by_third(last_i):
-    return lagrange_internal(last_i, (1.0, -4.0, 3.0), 2.0 * h)
+    return lagrange_internal(last_i, (1.0, -4.0, 3.0), 2.0 * h())
 
 
 def lagrange_ddy_0h2(last_i):
-    return lagrange_internal(last_i, (1.0, -2.0, 1.0), h**2)
+    return lagrange_internal(last_i, (1.0, -2.0, 1.0), h()**2)
 
 
 lagrange_usage = {
@@ -125,7 +127,7 @@ def linear_dependence_of_ddy(lagrange_options, i):
 
     dependence = ddy_lagrange_to_use(i+1)
     dependence[i] -= 1.0
-    x_i = x0 + i * h
+    x_i = x0 + i * h()
     dependence.append(2 * alpha + 2 + alpha * x_i * (1 - x_i))
 
     return dependence
@@ -161,7 +163,7 @@ def solve_dependencies_matrix(mx):
     x = x0
     for y in solution:
         pair_list.append((x, y))
-        x += h
+        x += h()
     return pair_list
 
 
@@ -186,7 +188,10 @@ def plot(data, steps):
     plt.show()
 
 
-def main():
+def compute(steps):
+    global n
+    old_n, n = n, steps
+
     data = {}
     for name, lagrange_options in lagrange_usage.items():
         try:
@@ -194,8 +199,14 @@ def main():
         except LinAlgError:
             pass
     data['ANALYTIC'] = pair_list_for_solution()
-
     plot(data, n)
+
+    n = old_n
+
+
+def main():
+    compute(2)
+
 
 if __name__ == '__main__':
     main()
